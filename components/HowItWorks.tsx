@@ -130,7 +130,7 @@ export function HowItWorks() {
               Ready to Start Your Journey?
             </h3>
             <p className="text-lg text-neutral-600 mb-6 max-w-2xl mx-auto">
-              Join thousands of professionals who are already building their verified skill portfolio with GyanBatua.ai
+              Join thousands of professionals who are already building their verified skill portfolio with mseducation.in
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}

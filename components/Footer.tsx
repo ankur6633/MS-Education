@@ -16,7 +16,7 @@ const footerLinks = {
     { name: 'Careers', href: '#' },
     { name: 'Blog', href: '#' },
     { name: 'Press', href: '#' },
-    { name: 'Contact', href: 'mailto:contact@gyanbatua.ai' }
+    { name: 'Contact', href: 'mailto:contact@mseducation.in' }
   ],
   resources: [
     { name: 'Help Center', href: '#' },
@@ -35,9 +35,9 @@ const footerLinks = {
 }
 
 const socialLinks = [
-  { name: 'LinkedIn', href: 'https://linkedin.com/company/gyanbatua', icon: Linkedin },
-  { name: 'Twitter', href: 'https://twitter.com/gyanbatua', icon: Twitter },
-  { name: 'YouTube', href: 'https://youtube.com/@gyanbatua', icon: Youtube }
+  { name: 'LinkedIn', href: 'https://linkedin.com/company/mseducation.in', icon: Linkedin },
+  { name: 'Twitter', href: 'https://twitter.com/mseducation.in', icon: Twitter },
+  { name: 'YouTube', href: 'https://youtube.com/@mseducation.in', icon: Youtube }
 ]
 
 export function Footer() {
@@ -68,7 +68,7 @@ export function Footer() {
                   <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
                     <span className="text-white font-bold text-sm">G</span>
                   </div>
-                  <span className="text-xl font-bold">GyanBatua.ai</span>
+                  <span className="text-xl font-bold">mseducation.in</span>
                 </div>
                 
                 <p className="text-neutral-400 mb-6 max-w-md">
@@ -231,16 +231,16 @@ export function Footer() {
         >
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-neutral-400 text-sm">
-              © 2025 MS Sahil / GyanBatua.ai. All rights reserved.
+              © 2025 MS Sahil / mseducation.in. All rights reserved.
             </div>
             <div className="flex items-center space-x-6 text-sm text-neutral-400">
               <span>Built in India</span>
               <span>•</span>
               <span>DPDP Compliant</span>
               <span>•</span>
-              <a href="mailto:contact@gyanbatua.ai" className="hover:text-white transition-colors">
+              <a href="mailto:contact@mseducation.in" className="hover:text-white transition-colors">
                 <Mail className="h-4 w-4 inline mr-1" />
-                contact@gyanbatua.ai
+                contact@mseducation.in.ai
               </a>
             </div>
           </div>

@@ -17,11 +17,11 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'GyanBatua.ai - Make Verified Skills Your Career Currency',
-  description: 'GyanBatua.ai is your AI-powered career co-pilot — personalize your learning path, verify your skills, and land the right job faster. Built in India • DPDP Compliant • Launching Nov 1, 2025',
+  title: 'mseducation.in - Make Verified Skills Your Career Currency',
+  description: 'mseducation.in is your AI-powered career co-pilot — personalize your learning path, verify your skills, and land the right job faster. Built in India • DPDP Compliant • Launching Nov 1, 2025',
   keywords: 'AI career, skill verification, blockchain credentials, job matching, upskilling, India, DPDP compliant',
-  authors: [{ name: 'GyanBatua.ai Team' }],
-  creator: 'GyanBatua.ai',
+  authors: [{ name: 'mseducation.in Team' }],
+  creator: 'mseducation.in',
   publisher: 'MS Sahil',
   robots: {
     index: true,
@@ -37,28 +37,28 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://gyanbatua.ai',
-    siteName: 'GyanBatua.ai',
-    title: 'GyanBatua.ai - Make Verified Skills Your Career Currency',
+    url: 'https://mseducation.in',
+    siteName: 'mseducation.in',
+    title: 'mseducation.in - Make Verified Skills Your Career Currency',
     description: 'AI-powered career co-pilot for personalized learning, skill verification, and job matching. Built in India • DPDP Compliant • Launching Nov 1, 2025',
     images: [
       {
-        url: 'https://gyanbatua.ai/og-image.jpg',
+        url: 'https://mseducation.in/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'GyanBatua.ai - AI Career Co-Pilot',
+        alt: 'mseducation.in - AI Career Co-Pilot',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GyanBatua.ai - Make Verified Skills Your Career Currency',
+    title: 'mseducation.in - Make Verified Skills Your Career Currency',
     description: 'AI-powered career co-pilot for personalized learning, skill verification, and job matching. Built in India • DPDP Compliant • Launching Nov 1, 2025',
-    images: ['https://gyanbatua.ai/og-image.jpg'],
-    creator: '@gyanbatua',
+    images: ['https://mseducation.in/og-image.jpg'],
+    creator: '@mseducation.in',
   },
   alternates: {
-    canonical: 'https://gyanbatua.ai',
+    canonical: 'https://mseducation.in',
   },
   verification: {
     google: 'your-google-verification-code',
@@ -73,7 +73,7 @@ export default function RootLayout({
   return (
     <html lang="en-IN" className={`${inter.variable} ${dmSans.variable}`}>
       <head>
-        <link rel="canonical" href="https://gyanbatua.ai" />
+        <link rel="canonical" href="https://mseducation.in" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#3C2CF2" />
         <link rel="icon" href="/favicon.ico" />

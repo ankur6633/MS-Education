@@ -214,7 +214,7 @@ export function ForRecruiters() {
             viewport={{ once: true }}
           >
             <h3 className="text-2xl font-bold text-neutral-800 mb-6">
-              Why Recruiters Choose GyanBatua
+              Why Recruiters Choose mseducation.in
             </h3>
             
             <div className="space-y-4">
@@ -299,7 +299,7 @@ export function ForRecruiters() {
               Start Hiring Better Talent Today
             </h3>
             <p className="text-lg text-neutral-600 mb-6 max-w-2xl mx-auto">
-              Join leading companies who trust GyanBatua for verified talent acquisition
+              Join leading companies who trust mseducation.in for verified talent acquisition
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold px-8 py-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">

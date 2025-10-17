@@ -12,7 +12,7 @@ declare global {
 export function Analytics() {
   useEffect(() => {
     // Check if user has consented to analytics
-    const consent = localStorage.getItem('gyanbatua-consent')
+    const consent = localStorage.getItem('mseducation.in-consent')
     const hasConsented = consent === 'true'
 
     if (hasConsented) {

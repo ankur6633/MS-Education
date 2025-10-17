@@ -1,6 +1,6 @@
-# GyanBatua.ai - AI Career Co-Pilot
+# mseducation.in - AI Career Co-Pilot
 
-A production-grade, vibrant, SEO-optimized one-page website for GyanBatua.ai — India's AI Career Co-Pilot.
+A production-grade, vibrant, SEO-optimized one-page website for mseducation.in — India's AI Career Co-Pilot.
 
 ## 🚀 Features
 
@@ -28,7 +28,7 @@ A production-grade, vibrant, SEO-optimized one-page website for GyanBatua.ai —
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd gyanbatua-website
+cd mseducation.in-website
 ```
 
 2. Install dependencies:
@@ -54,15 +54,15 @@ Create a `.env.local` file with the following variables:
 
 ```env
 # Site Configuration
-SITE_URL=https://gyanbatua.ai
-CONTACT_EMAIL=contact@gyanbatua.ai
+SITE_URL=https://mseducation.in
+CONTACT_EMAIL=contact@mseducation.in
 
 # Analytics (Optional - only if user consents)
 ANALYTICS_KEY=your_analytics_key_here
-PLAUSIBLE_DOMAIN=gyanbatua.ai
+PLAUSIBLE_DOMAIN=mseducation.in.ai
 
 # Next.js
-NEXT_PUBLIC_SITE_URL=https://gyanbatua.ai
+NEXT_PUBLIC_SITE_URL=https://mseducation.in
 ```
 
 ## 📁 Project Structure
@@ -195,8 +195,8 @@ The website content is managed through:
 
 ## 📞 Support
 
-- **Email**: contact@gyanbatua.ai
-- **Website**: https://gyanbatua.ai
+- **Email**: contact@mseducation.in
+- **Website**: https://mseducation.in
 - **Documentation**: [Link to docs]
 
 ---

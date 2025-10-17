@@ -6,12 +6,12 @@ import { Plus, Minus } from 'lucide-react'
 
 const faqs = [
   {
-    question: 'What is GyanBatua.ai?',
-    answer: 'GyanBatua.ai is an AI-powered upskilling and job-readiness platform that helps you learn, verify, and showcase your skills in a blockchain-backed Skill Wallet.'
+    question: 'What is mseducation.in?',
+    answer: 'mseducation.in is an AI-powered upskilling and job-readiness platform that helps you learn, verify, and showcase your skills in a blockchain-backed Skill Wallet.'
   },
   {
     question: 'How is it different from other edtech platforms?',
-    answer: 'GyanBatua combines personalized learning, verifiable credentials, and direct job routing — all in one place.'
+    answer: 'mseducation.in combines personalized learning, verifiable credentials, and direct job routing — all in one place.'
   },
   {
     question: 'What is a Skill Wallet?',
@@ -22,19 +22,19 @@ const faqs = [
     answer: 'The mentor uses real job data to recommend what to learn next, guide your interview prep, and improve your career readiness.'
   },
   {
-    question: 'Can I use GyanBatua for free?',
+    question: 'Can I use mseducation.in for free?',
     answer: 'Yes. The free plan includes roadmap access, a Skill Wallet, and job browsing. Premium unlocks mentor and certifications.'
   },
   {
-    question: 'When is GyanBatua launching?',
+    question: 'When is mseducation.in launching?',
     answer: 'November 1, 2025 — with early pilots starting before launch.'
   },
   {
     question: 'Are my data and credentials secure?',
-    answer: 'Yes. GyanBatua is DPDP-compliant, data encrypted, consent-driven, and supports export/delete requests.'
+    answer: 'Yes. mseducation.in is DPDP-compliant, data encrypted, consent-driven, and supports export/delete requests.'
   },
   {
-    question: 'Can universities integrate with GyanBatua?',
+    question: 'Can universities integrate with mseducation.in?',
     answer: 'Yes. Institutions can access placement analytics and skill-readiness dashboards.'
   },
   {
@@ -42,11 +42,11 @@ const faqs = [
     answer: 'Yes. Recruiters can view verified skills via the QR Resume API and filter talent by readiness.'
   },
   {
-    question: 'What technologies power GyanBatua?',
+    question: 'What technologies power mseducation.in?',
     answer: 'Built with LLMs, blockchain credentials, and advanced analytics — designed for scalability and trust.'
   },
   {
-    question: 'Does GyanBatua support government or skill missions?',
+    question: 'Does mseducation.in support government or skill missions?',
     answer: 'It aligns with India\'s Skill Development and Digital India missions through verified, portable credentials.'
   },
   {
@@ -77,7 +77,7 @@ export function FAQ() {
             <span className="gradient-text"> Questions</span>
           </h2>
           <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-            Everything you need to know about GyanBatua.ai. Can't find the answer you're looking for? 
+            Everything you need to know about mseducation.in. Can't find the answer you're looking for? 
             Please contact our support team.
           </p>
         </motion.div>
@@ -148,7 +148,7 @@ export function FAQ() {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
-                href="mailto:contact@gyanbatua.ai"
+                href="mailto:contact@mseducation.in"
                 className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold px-8 py-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 Contact Support

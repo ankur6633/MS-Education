@@ -182,7 +182,7 @@ export function WaitlistForm() {
         </form>
 
         <p className="text-xs text-neutral-500 text-center mt-4">
-          By joining, you agree to receive updates about GyanBatua.ai. 
+          By joining, you agree to receive updates about mseducation.in. 
           You can unsubscribe at any time.
         </p>
       </div>

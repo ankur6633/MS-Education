@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.SITE_URL || 'https://gyanbatua.ai',
+  siteUrl: process.env.SITE_URL || 'https://mseducation.in',
   generateRobotsTxt: true,
   robotsTxtOptions: {
     policies: [
@@ -11,7 +11,7 @@ module.exports = {
       },
     ],
     additionalSitemaps: [
-      'https://gyanbatua.ai/sitemap.xml',
+      'https://mseducation.in/sitemap.xml',
     ],
   },
   exclude: ['/api/*'],

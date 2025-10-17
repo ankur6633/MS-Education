@@ -88,7 +88,7 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl md:text-2xl text-neutral-600 mb-12 max-w-4xl mx-auto leading-relaxed"
           >
-            GyanBatua.ai is your AI-powered career co-pilot — personalize your learning path, 
+            mseducation.in is your AI-powered career co-pilot — personalize your learning path, 
             verify your skills, and land the right job faster.
           </motion.p>
 

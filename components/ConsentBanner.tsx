@@ -11,7 +11,7 @@ export function ConsentBanner() {
 
   useEffect(() => {
     // Check if user has already made a choice
-    const consent = localStorage.getItem('gyanbatua-consent')
+    const consent = localStorage.getItem('mseducation.in-consent')
     if (consent === null) {
       setIsVisible(true)
     } else {
@@ -20,7 +20,7 @@ export function ConsentBanner() {
   }, [])
 
   const handleAccept = () => {
-    localStorage.setItem('gyanbatua-consent', 'true')
+    localStorage.setItem('mseducation.in-consent', 'true')
     setHasConsented(true)
     setIsVisible(false)
     
@@ -33,7 +33,7 @@ export function ConsentBanner() {
   }
 
   const handleDecline = () => {
-    localStorage.setItem('gyanbatua-consent', 'false')
+    localStorage.setItem('mseducation.in-consent', 'false')
     setHasConsented(false)
     setIsVisible(false)
     
@@ -74,7 +74,7 @@ export function ConsentBanner() {
                   Privacy & Cookie Consent
                 </h3>
                 <p className="text-neutral-600 text-sm mb-4">
-                  We use cookies and analytics to improve your experience on GyanBatua.ai. 
+                  We use cookies and analytics to improve your experience on mseducation.in. 
                   Your data is protected under DPDP (Digital Personal Data Protection) Act. 
                   You can change your preferences anytime.
                 </p>
