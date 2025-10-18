@@ -1,22 +1,22 @@
 export const siteConfig = {
-  name: 'GyanBatua.ai',
+  name: 'mseducation.in',
   description: 'AI-powered career co-pilot for personalized learning, skill verification, and job matching. Built in India • DPDP Compliant • Launching Nov 1, 2025',
-  url: 'https://gyanbatua.ai',
-  ogImage: 'https://gyanbatua.ai/og-image.jpg',
+  url: 'https://mseducation.in',
+  ogImage: 'https://mseducation.in/og-image.jpg',
   links: {
-    twitter: 'https://twitter.com/gyanbatua',
-    linkedin: 'https://linkedin.com/company/gyanbatua',
-    youtube: 'https://youtube.com/@gyanbatua',
+    twitter: 'https://twitter.com/mseducation',
+    linkedin: 'https://linkedin.com/company/mseducation',
+    youtube: 'https://youtube.com/@mseducation',
   },
 }
 
 export const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "GyanBatua.ai",
-  "alternateName": "GyanBatua",
-  "url": "https://gyanbatua.ai",
-  "logo": "https://gyanbatua.ai/logo.png",
+  "name": "mseducation.in",
+  "alternateName": "mseducation",
+  "url": "https://mseducation.in",
+  "logo": "https://mseducation.in/logo.png",
   "description": "AI-powered career co-pilot for personalized learning, skill verification, and job matching",
   "foundingDate": "2024",
   "founder": {
@@ -27,13 +27,13 @@ export const organizationSchema = {
     "@type": "ContactPoint",
     "telephone": "+91-XXXXXXXXXX",
     "contactType": "customer service",
-    "email": "contact@gyanbatua.ai",
+    "email": "contact@mseducation.in",
     "availableLanguage": ["English", "Hindi"]
   },
   "sameAs": [
-    "https://twitter.com/gyanbatua",
-    "https://linkedin.com/company/gyanbatua",
-    "https://youtube.com/@gyanbatua"
+    "https://twitter.com/mseducation",
+    "https://linkedin.com/company/mseducation",
+    "https://youtube.com/@mseducation"
   ],
   "address": {
     "@type": "PostalAddress",
@@ -42,36 +42,36 @@ export const organizationSchema = {
     "addressRegion": "Delhi"
   },
   "inLanguage": "en-IN",
-  "mainEntityOfPage": "https://gyanbatua.ai"
+  "mainEntityOfPage": "https://mseducation.in"
 }
 
 export const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "GyanBatua.ai",
-  "url": "https://gyanbatua.ai",
+  "name": "mseducation.in",
+  "url": "https://mseducation.in",
   "description": "AI-powered career co-pilot for personalized learning, skill verification, and job matching",
   "publisher": {
     "@type": "Organization",
-    "name": "GyanBatua.ai"
+    "name": "mseducation.in"
   },
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://gyanbatua.ai/search?q={search_term_string}",
+    "target": "https://mseducation.in/search?q={search_term_string}",
     "query-input": "required name=search_term_string"
   },
   "inLanguage": "en-IN",
-  "mainEntityOfPage": "https://gyanbatua.ai"
+  "mainEntityOfPage": "https://mseducation.in"
 }
 
 export const productSchema = {
   "@context": "https://schema.org",
   "@type": "Product",
-  "name": "GyanBatua.ai Platform",
+  "name": "mseducation.in Platform",
   "description": "AI-powered career co-pilot that helps users learn, verify, and showcase their skills in a blockchain-backed Skill Wallet",
   "brand": {
     "@type": "Brand",
-    "name": "GyanBatua.ai"
+    "name": "mseducation.in"
   },
   "category": "Education Technology",
   "offers": [
@@ -103,15 +103,15 @@ export const productSchema = {
     "reviewCount": "150"
   },
   "inLanguage": "en-IN",
-  "mainEntityOfPage": "https://gyanbatua.ai"
+  "mainEntityOfPage": "https://mseducation.in"
 }
 
 export const howToSchema = {
   "@context": "https://schema.org",
   "@type": "HowTo",
-  "name": "How to Use GyanBatua.ai for Career Growth",
-  "description": "Learn how to use GyanBatua.ai to diagnose skills, follow AI roadmaps, and verify credentials for career advancement",
-  "image": "https://gyanbatua.ai/how-to-image.jpg",
+  "name": "How to Use mseducation.in for Career Growth",
+  "description": "Learn how to use mseducation.in to diagnose skills, follow AI roadmaps, and verify credentials for career advancement",
+  "image": "https://mseducation.in/how-to-image.jpg",
   "totalTime": "PT30M",
   "estimatedCost": {
     "@type": "MonetaryAmount",
@@ -123,26 +123,26 @@ export const howToSchema = {
       "@type": "HowToStep",
       "name": "Diagnose Your Skills",
       "text": "Import your LinkedIn profile or resume and take a 10-minute skill diagnostic to identify your current strengths and gaps",
-      "image": "https://gyanbatua.ai/step1.jpg",
-      "url": "https://gyanbatua.ai#how-it-works"
+      "image": "https://mseducation.in/step1.jpg",
+      "url": "https://mseducation.in#how-it-works"
     },
     {
       "@type": "HowToStep",
       "name": "Follow AI Roadmaps",
       "text": "Get personalized weekly learning roadmaps with courses, projects, and quizzes tailored to your career goals",
-      "image": "https://gyanbatua.ai/step2.jpg",
-      "url": "https://gyanbatua.ai#how-it-works"
+      "image": "https://mseducation.in/step2.jpg",
+      "url": "https://mseducation.in#how-it-works"
     },
     {
       "@type": "HowToStep",
       "name": "Verify & Apply",
       "text": "Earn blockchain-verified badges and create a shareable QR Resume to showcase your verified skills to employers",
-      "image": "https://gyanbatua.ai/step3.jpg",
-      "url": "https://gyanbatua.ai#how-it-works"
+      "image": "https://mseducation.in/step3.jpg",
+      "url": "https://mseducation.in#how-it-works"
     }
   ],
   "inLanguage": "en-IN",
-  "mainEntityOfPage": "https://gyanbatua.ai"
+  "mainEntityOfPage": "https://mseducation.in"
 }
 
 export const faqSchema = {
@@ -151,10 +151,10 @@ export const faqSchema = {
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "What is GyanBatua.ai?",
+      "name": "What is mseducation.in?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "GyanBatua.ai is an AI-powered upskilling and job-readiness platform that helps you learn, verify, and showcase your skills in a blockchain-backed Skill Wallet."
+        "text": "mseducation.in is an AI-powered upskilling and job-readiness platform that helps you learn, verify, and showcase your skills in a blockchain-backed Skill Wallet."
       }
     },
     {
@@ -162,7 +162,7 @@ export const faqSchema = {
       "name": "How is it different from other edtech platforms?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "GyanBatua combines personalized learning, verifiable credentials, and direct job routing — all in one place."
+        "text": "mseducation combines personalized learning, verifiable credentials, and direct job routing — all in one place."
       }
     },
     {
@@ -183,7 +183,7 @@ export const faqSchema = {
     },
     {
       "@type": "Question",
-      "name": "Can I use GyanBatua for free?",
+      "name": "Can I use mseducation for free?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Yes. The free plan includes roadmap access, a Skill Wallet, and job browsing. Premium unlocks mentor and certifications."
@@ -191,7 +191,7 @@ export const faqSchema = {
     },
     {
       "@type": "Question",
-      "name": "When is GyanBatua launching?",
+      "name": "When is mseducation launching?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "November 1, 2025 — with early pilots starting before launch."
@@ -202,12 +202,12 @@ export const faqSchema = {
       "name": "Are my data and credentials secure?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. GyanBatua is DPDP-compliant, data encrypted, consent-driven, and supports export/delete requests."
+        "text": "Yes. mseducation is DPDP-compliant, data encrypted, consent-driven, and supports export/delete requests."
       }
     },
     {
       "@type": "Question",
-      "name": "Can universities integrate with GyanBatua?",
+      "name": "Can universities integrate with mseducation?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Yes. Institutions can access placement analytics and skill-readiness dashboards."
@@ -223,7 +223,7 @@ export const faqSchema = {
     },
     {
       "@type": "Question",
-      "name": "What technologies power GyanBatua?",
+      "name": "What technologies power mseducation?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Built with LLMs, blockchain credentials, and advanced analytics — designed for scalability and trust."
@@ -231,7 +231,7 @@ export const faqSchema = {
     },
     {
       "@type": "Question",
-      "name": "Does GyanBatua support government or skill missions?",
+      "name": "Does mseducation support government or skill missions?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "It aligns with India's Skill Development and Digital India missions through verified, portable credentials."
@@ -247,5 +247,5 @@ export const faqSchema = {
     }
   ],
   "inLanguage": "en-IN",
-  "mainEntityOfPage": "https://gyanbatua.ai"
+  "mainEntityOfPage": "https://mseducation.in"
 }
