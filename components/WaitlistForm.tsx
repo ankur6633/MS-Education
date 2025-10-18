@@ -66,7 +66,7 @@ export function WaitlistForm() {
             Welcome to the Waitlist!
           </h3>
           <p className="text-neutral-600 mb-6">
-            Thank you for joining us. We'll send you updates about the launch and early access opportunities.
+            Thank you for joining us. We&apos;ll send you updates about the launch and early access opportunities.
           </p>
           <Button
             onClick={() => setIsSubmitted(false)}

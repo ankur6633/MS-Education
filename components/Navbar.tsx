@@ -7,12 +7,11 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const navItems = [
   { name: 'How It Works', href: '#how-it-works' },
-  { name: 'Skill Wallet', href: '#wallet' },
-  { name: 'Jobs', href: '#jobs' },
+  { name: 'Courses', href: '#courses' },
+  { name: 'Placements', href: '#jobs' },
   { name: 'AI Mentor', href: '#mentor' },
   { name: 'Campus', href: '#campus' },
-  { name: 'Recruiters', href: '#recruiters' },
-  { name: 'Pricing', href: '#pricing' },
+  { name: 'Achievements', href: '#achievements' },
   { name: 'FAQ', href: '#faq' },
 ]
 
@@ -54,9 +53,9 @@ export function Navbar() {
             className="flex items-center space-x-2"
           >
             <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">G</span>
+              <span className="text-white font-bold text-sm">MS</span>
             </div>
-            <span className="text-xl font-bold gradient-text">mseducation.in</span>
+            <span className="text-xl font-bold gradient-text whitespace-nowrap">MS Education</span>
           </motion.div>
 
           {/* Desktop Navigation */}
@@ -75,10 +74,10 @@ export function Navbar() {
           {/* CTA Button */}
           <div className="hidden lg:flex items-center space-x-4">
             <Button
-              onClick={() => scrollToSection('#cta')}
+              onClick={() => scrollToSection('#enrollment-form')}
               className="group"
             >
-              Join Waitlist
+              Enroll Now
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
@@ -117,10 +116,10 @@ export function Navbar() {
                 </button>
               ))}
               <Button
-                onClick={() => scrollToSection('#cta')}
+                onClick={() => scrollToSection('#enrollment-form')}
                 className="w-full group"
               >
-                Join Waitlist
+                Enroll Now
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
