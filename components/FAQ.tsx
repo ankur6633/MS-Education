@@ -77,7 +77,7 @@ export function FAQ() {
             <span className="gradient-text"> Questions</span>
           </h2>
           <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-            Everything you need to know about MS Education. Can't find the answer you're looking for? 
+            Everything you need to know about MS Education. Can&apos;t find the answer you&apos;re looking for? 
             Please contact our support team.
           </p>
         </motion.div>
@@ -144,7 +144,7 @@ export function FAQ() {
               Still Have Questions?
             </h3>
             <p className="text-lg text-neutral-600 mb-6 max-w-2xl mx-auto">
-              Our support team is here to help. Get in touch and we'll respond within 24 hours.
+              Our support team is here to help. Get in touch and we&apos;ll respond within 24 hours.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a

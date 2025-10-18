@@ -59,7 +59,7 @@ export function ForCampus() {
             <span className="gradient-text"> Data</span>
           </h2>
           <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-            mseducation.in's dashboards give institutions skill-readiness insights, 
+            mseducation.in&apos;s dashboards give institutions skill-readiness insights, 
             placement analytics, and NIRF-friendly reports to improve student outcomes.
           </p>
         </motion.div>

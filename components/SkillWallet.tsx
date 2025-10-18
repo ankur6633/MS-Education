@@ -122,7 +122,7 @@ const courses = [
 
 export function SkillWallet() {
   return (
-    <section className="relative w-full py-16 bg-gradient-to-br from-neutral-50 to-neutral-100">
+    <section id="courses" className="relative w-full py-16 bg-gradient-to-br from-neutral-50 to-neutral-100">
       <div className="container-custom">
         {/* Header */}
         <div className="text-center mb-12">

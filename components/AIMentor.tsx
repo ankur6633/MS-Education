@@ -119,7 +119,7 @@ export function AIMentor() {
                   {/* User Message */}
                   <div className="flex justify-end">
                     <div className="bg-primary-500 text-white p-3 rounded-lg max-w-xs">
-                      <p className="text-sm">I'm preparing for CA Foundation. How should I plan my studies?</p>
+                      <p className="text-sm">I&apos;m preparing for CA Foundation. How should I plan my studies?</p>
                     </div>
                   </div>
 
@@ -151,7 +151,7 @@ export function AIMentor() {
                   <div className="flex justify-start">
                     <div className="bg-neutral-100 p-3 rounded-lg max-w-xs">
                       <p className="text-sm text-neutral-800">
-                        Perfect! Here's your mock test schedule:
+                        Perfect! Here&apos;s your mock test schedule:
                         <br /><br />
                         📚 <strong>Monthly Tests</strong> - Track your progress
                         <br />
@@ -159,7 +159,7 @@ export function AIMentor() {
                         <br />
                         🎯 <strong>Final Mock Series</strong> - 2 months before exam
                         <br /><br />
-                        I'll create a personalized study plan for you!
+                        I&apos;ll create a personalized study plan for you!
                       </p>
                     </div>
                   </div>
