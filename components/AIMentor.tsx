@@ -7,35 +7,35 @@ import { MessageCircle, BookOpen, Users, Brain, Shield, Zap } from 'lucide-react
 const features = [
   {
     icon: Brain,
-    title: 'Personalized Learning',
-    description: 'AI mentor analyzes your skill gaps and creates custom learning paths tailored to your career goals'
+    title: 'Personalized Study Plans',
+    description: 'AI-powered study plans tailored to your learning pace, strengths, and exam requirements'
   },
   {
     icon: MessageCircle,
-    title: '24/7 Career Guidance',
-    description: 'Get instant answers to career questions, interview tips, and learning recommendations anytime'
+    title: '24/7 Academic Support',
+    description: 'Get instant answers to study questions, exam strategies, and learning guidance anytime'
   },
   {
     icon: BookOpen,
-    title: 'Portfolio Reviews',
-    description: 'AI-powered feedback on your projects, resume, and skill demonstrations to improve your profile'
+    title: 'Performance Analytics',
+    description: 'Track your progress with detailed analytics, identify weak areas, and improve your performance'
   },
   {
     icon: Users,
-    title: 'Mock Interviews',
-    description: 'Practice interviews with AI that simulates real hiring scenarios and provides detailed feedback'
+    title: 'Mock Tests & Practice',
+    description: 'Practice with AI-generated mock tests that simulate real exam conditions and provide detailed feedback'
   }
 ]
 
 const mentorCapabilities = [
-  'Real-time job market analysis',
-  'Skill gap identification',
-  'Learning path optimization',
-  'Interview preparation',
-  'Resume optimization',
-  'Career transition guidance',
-  'Salary negotiation tips',
-  'Industry trend insights'
+  'Exam pattern analysis',
+  'Study schedule optimization',
+  'Weak area identification',
+  'Mock test preparation',
+  'Time management strategies',
+  'Stress management techniques',
+  'Revision planning',
+  'Performance tracking'
 ]
 
 export function AIMentor() {
@@ -50,12 +50,12 @@ export function AIMentor() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold text-neutral-800 mb-6">
-            LLM-Powered Mentor That
-            <span className="gradient-text"> Knows Your Career</span>
+            AI-Powered Study Mentor That
+            <span className="gradient-text"> Knows Your Goals</span>
           </h2>
           <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-            Chat with your AI Mentor for learning advice, portfolio reviews, and mock interviews. 
-            Built with RAG + guardrails for trust and accuracy.
+            Get personalized study guidance, performance analytics, and exam strategies from our AI mentor. 
+            Built with advanced algorithms for accurate academic support.
           </p>
         </motion.div>
 
@@ -108,7 +108,7 @@ export function AIMentor() {
                       <Brain className="h-4 w-4" />
                     </div>
                     <div>
-                      <h3 className="font-semibold">AI Career Mentor</h3>
+                      <h3 className="font-semibold">AI Study Mentor</h3>
                       <p className="text-xs text-primary-100">Online • Ready to help</p>
                     </div>
                   </div>
@@ -119,7 +119,7 @@ export function AIMentor() {
                   {/* User Message */}
                   <div className="flex justify-end">
                     <div className="bg-primary-500 text-white p-3 rounded-lg max-w-xs">
-                      <p className="text-sm">I want to transition from marketing to data science. What should I learn first?</p>
+                      <p className="text-sm">I'm preparing for CA Foundation. How should I plan my studies?</p>
                     </div>
                   </div>
 
@@ -127,15 +127,15 @@ export function AIMentor() {
                   <div className="flex justify-start">
                     <div className="bg-neutral-100 p-3 rounded-lg max-w-xs">
                       <p className="text-sm text-neutral-800">
-                        Great question! Based on your marketing background, I recommend starting with:
+                        Great! For CA Foundation, I recommend this study plan:
                         <br /><br />
-                        1. <strong>Python fundamentals</strong> - Essential for data analysis
+                        1. <strong>Accounting</strong> - 40% of your time
                         <br />
-                        2. <strong>SQL</strong> - For database querying
+                        2. <strong>Business Laws</strong> - 25% of your time
                         <br />
-                        3. <strong>Statistics & Excel</strong> - Build on your analytical skills
+                        3. <strong>Economics & Maths</strong> - 35% of your time
                         <br /><br />
-                        Would you like a detailed learning roadmap?
+                        Would you like a detailed 6-month study schedule?
                       </p>
                     </div>
                   </div>
@@ -143,7 +143,7 @@ export function AIMentor() {
                   {/* User Message */}
                   <div className="flex justify-end">
                     <div className="bg-primary-500 text-white p-3 rounded-lg max-w-xs">
-                      <p className="text-sm">Yes, please! And what about projects I can work on?</p>
+                      <p className="text-sm">Yes! And what about mock tests?</p>
                     </div>
                   </div>
 
@@ -151,15 +151,15 @@ export function AIMentor() {
                   <div className="flex justify-start">
                     <div className="bg-neutral-100 p-3 rounded-lg max-w-xs">
                       <p className="text-sm text-neutral-800">
-                        Perfect! Here are some beginner-friendly projects:
+                        Perfect! Here's your mock test schedule:
                         <br /><br />
-                        📊 <strong>Marketing Campaign Analysis</strong> - Use your domain knowledge
+                        📚 <strong>Monthly Tests</strong> - Track your progress
                         <br />
-                        📈 <strong>Sales Data Visualization</strong> - Practice with real datasets
+                        📈 <strong>Weekly Quizzes</strong> - Reinforce learning
                         <br />
-                        🎯 <strong>Customer Segmentation</strong> - Apply clustering techniques
+                        🎯 <strong>Final Mock Series</strong> - 2 months before exam
                         <br /><br />
-                        I'll create a personalized 12-week roadmap for you!
+                        I'll create a personalized study plan for you!
                       </p>
                     </div>
                   </div>
@@ -170,7 +170,7 @@ export function AIMentor() {
                   <div className="flex items-center space-x-2">
                     <input
                       type="text"
-                      placeholder="Ask your AI mentor anything..."
+                      placeholder="Ask your AI study mentor anything..."
                       className="flex-1 px-3 py-2 border border-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
                     <button className="bg-primary-500 text-white p-2 rounded-lg hover:bg-primary-600 transition-colors">
@@ -192,7 +192,7 @@ export function AIMentor() {
           className="mb-16"
         >
           <h3 className="text-2xl font-bold text-neutral-800 mb-8 text-center">
-            What Your AI Mentor Can Do
+            What Your AI Study Mentor Can Do
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -221,16 +221,16 @@ export function AIMentor() {
           className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center"
         >
           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-            <div className="text-3xl font-bold gradient-text mb-2">99.2%</div>
-            <div className="text-neutral-600">Accuracy Rate</div>
+            <div className="text-3xl font-bold gradient-text mb-2">95%</div>
+            <div className="text-neutral-600">Student Success Rate</div>
           </div>
           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg">
             <div className="text-3xl font-bold gradient-text mb-2">24/7</div>
-            <div className="text-neutral-600">Available Support</div>
+            <div className="text-neutral-600">Study Support</div>
           </div>
           <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-            <div className="text-3xl font-bold gradient-text mb-2">10K+</div>
-            <div className="text-neutral-600">Career Questions Answered</div>
+            <div className="text-3xl font-bold gradient-text mb-2">50K+</div>
+            <div className="text-neutral-600">Study Questions Answered</div>
           </div>
         </motion.div>
       </div>

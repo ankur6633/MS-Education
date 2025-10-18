@@ -6,18 +6,18 @@ import { Star, Clock, Users, Award, CheckCircle } from 'lucide-react'
 const courses = [
   {
     id: 1,
-    title: 'Complete CA Foundation Course Kit',
-    subtitle: 'All Books + Video Classes + Practice Tests',
-    description: 'CA Foundation | Intermediate | Final - Complete Study Material with Expert Guidance',
+    title: 'CA Foundation Complete Course',
+    subtitle: 'Live Classes + Study Material + Mock Tests',
+    description: 'Comprehensive CA Foundation preparation with expert faculty, complete study material, and 100% placement assistance',
     hindi: 'CA फाउंडेशन कंप्लीट कोर्स',
-    rating: 4.4,
-    reviews: 1250,
-    currentPrice: '₹2,999',
-    originalPrice: '₹4,999',
-    discount: '40% OFF',
+    rating: 4.8,
+    reviews: 2850,
+    currentPrice: '₹15,999',
+    originalPrice: '₹25,999',
+    discount: '38% OFF',
     duration: '6 Months',
-    students: '10,000+',
-    features: ['Live Classes', 'Recorded Videos', 'Study Material', 'Mock Tests', 'Doubt Support'],
+    students: '12,500+',
+    features: ['Live Classes', 'Study Material', 'Mock Tests', 'Doubt Support', 'Placement Assistance'],
     badge: 'BESTSELLER',
     badgeColor: 'bg-green-500',
     image: '📚',
@@ -25,17 +25,17 @@ const courses = [
   },
   {
     id: 2,
-    title: 'GATE & ESE Complete Preparation',
-    subtitle: 'All Engineering Streams Covered',
-    description: 'CS & IT | CH | CE | ECE | EE | ME & XE - Comprehensive GATE & ESE Preparation',
-    hindi: 'GATE & ESE कंप्लीट प्रिपरेशन',
-    rating: 4.5,
-    reviews: 2100,
-    currentPrice: '₹1,999',
-    originalPrice: '₹3,499',
-    discount: '43% OFF',
+    title: 'GATE & ESE Engineering Preparation',
+    subtitle: 'All Engineering Streams + Previous Year Papers',
+    description: 'Complete GATE & ESE preparation for CS, IT, CE, ECE, EE, ME & XE with expert guidance and test series',
+    hindi: 'GATE & ESE इंजीनियरिंग प्रिपरेशन',
+    rating: 4.7,
+    reviews: 3200,
+    currentPrice: '₹12,999',
+    originalPrice: '₹19,999',
+    discount: '35% OFF',
     duration: '8 Months',
-    students: '15,000+',
+    students: '18,000+',
     features: ['All Streams', 'Previous Year Papers', 'Test Series', 'Video Lectures', 'Study Notes'],
     badge: 'RECOMMENDED',
     badgeColor: 'bg-blue-500',
@@ -44,22 +44,79 @@ const courses = [
   },
   {
     id: 3,
-    title: 'UPSC Civil Services Complete Kit',
+    title: 'UPSC Civil Services Complete Program',
     subtitle: 'NCERT + CSAT + Prelims + Mains + Interview',
-    description: 'Complete UPSC Preparation with NCERT, CSAT, Prelims, Mains & Interview Guidance',
-    hindi: 'UPSC सिविल सर्विसेज कंप्लीट किट',
-    rating: 4.3,
-    reviews: 1800,
-    currentPrice: '₹3,499',
-    originalPrice: '₹5,999',
-    discount: '42% OFF',
+    description: 'Complete UPSC preparation with NCERT books, CSAT material, current affairs, and interview guidance',
+    hindi: 'UPSC सिविल सर्विसेज कंप्लीट प्रोग्राम',
+    rating: 4.6,
+    reviews: 2100,
+    currentPrice: '₹24,999',
+    originalPrice: '₹39,999',
+    discount: '37% OFF',
     duration: '12 Months',
-    students: '8,500+',
+    students: '9,500+',
     features: ['NCERT Books', 'CSAT Material', 'Current Affairs', 'Test Series', 'Interview Prep'],
     badge: 'POPULAR',
     badgeColor: 'bg-orange-500',
     image: '📖',
     theme: 'upsc'
+  },
+  {
+    id: 4,
+    title: 'MBA Entrance Preparation',
+    subtitle: 'CAT + XAT + SNAP + NMAT + IIFT',
+    description: 'Complete MBA entrance preparation for all major exams with expert faculty and comprehensive study material',
+    hindi: 'MBA एंट्रेंस प्रिपरेशन',
+    rating: 4.5,
+    reviews: 1800,
+    currentPrice: '₹18,999',
+    originalPrice: '₹29,999',
+    discount: '37% OFF',
+    duration: '10 Months',
+    students: '7,200+',
+    features: ['All MBA Exams', 'Mock Tests', 'GD/PI Prep', 'Study Material', 'Placement Support'],
+    badge: 'TRENDING',
+    badgeColor: 'bg-purple-500',
+    image: '💼',
+    theme: 'mba'
+  },
+  {
+    id: 5,
+    title: 'Banking & SSC Complete Course',
+    subtitle: 'IBPS + SBI + SSC CGL + CHSL + MTS',
+    description: 'Complete banking and SSC preparation with comprehensive study material and expert guidance',
+    hindi: 'बैंकिंग और SSC कंप्लीट कोर्स',
+    rating: 4.4,
+    reviews: 2500,
+    currentPrice: '₹8,999',
+    originalPrice: '₹14,999',
+    discount: '40% OFF',
+    duration: '6 Months',
+    students: '15,800+',
+    features: ['All Banking Exams', 'SSC Preparation', 'Mock Tests', 'Study Material', 'Current Affairs'],
+    badge: 'HOT',
+    badgeColor: 'bg-red-500',
+    image: '🏦',
+    theme: 'banking'
+  },
+  {
+    id: 6,
+    title: 'Railway & Defense Exams',
+    subtitle: 'RRB + NTPC + Group D + CDS + AFCAT',
+    description: 'Complete preparation for Railway and Defense exams with expert faculty and comprehensive study material',
+    hindi: 'रेलवे और डिफेंस एग्जाम्स',
+    rating: 4.3,
+    reviews: 1600,
+    currentPrice: '₹11,999',
+    originalPrice: '₹18,999',
+    discount: '37% OFF',
+    duration: '8 Months',
+    students: '6,500+',
+    features: ['Railway Exams', 'Defense Exams', 'Mock Tests', 'Study Material', 'Physical Prep'],
+    badge: 'NEW',
+    badgeColor: 'bg-indigo-500',
+    image: '🚂',
+    theme: 'railway'
   }
 ]
 
@@ -86,7 +143,7 @@ export function SkillWallet() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-3xl md:text-4xl font-bold text-neutral-800 mb-4"
           >
-            Your Portable, Verifiable Skill Wallet
+            Our Comprehensive Course Catalog
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -94,7 +151,7 @@ export function SkillWallet() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg text-neutral-600 max-w-2xl mx-auto"
           >
-            Master your skills with our comprehensive course packages. Get certified, get hired, get ahead.
+            Choose from our wide range of courses designed by experts. Get certified, get placed, get ahead in your career.
           </motion.p>
         </div>
 
@@ -209,7 +266,7 @@ export function SkillWallet() {
 
                 {/* CTA Button */}
                 <button className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold py-3 rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 transform group-hover:scale-105">
-                  View Details
+                  Enroll Now
                 </button>
               </div>
             </motion.div>
@@ -224,10 +281,10 @@ export function SkillWallet() {
           className="text-center mt-12"
         >
           <p className="text-neutral-600 mb-4">
-            Join over 50,000+ students who have transformed their careers with MS Education
+            Join over 50,000+ successful students who have achieved their career goals with MS Education
           </p>
           <button className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold px-8 py-3 rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-300">
-            Explore All Courses
+            View All Courses
           </button>
         </motion.div>
       </div>

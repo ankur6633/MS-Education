@@ -7,40 +7,40 @@ import { FileText, BookOpen, Award, ArrowRight } from 'lucide-react'
 const steps = [
   {
     number: '01',
-    title: 'Diagnose',
-    description: 'Import LinkedIn/Resume and take a 10-min skill diagnostic.',
+    title: 'Enroll',
+    description: 'Choose your course and enroll with expert guidance and counseling.',
     icon: FileText,
     details: [
-      'Upload your LinkedIn profile or resume',
-      'Complete AI-powered skill assessment',
-      'Get personalized skill gap analysis',
-      'Receive detailed career readiness report'
+      'Free career counseling session',
+      'Course selection guidance',
+      'Flexible payment options',
+      'Immediate access to study material'
     ],
     color: 'from-blue-500 to-blue-600'
   },
   {
     number: '02',
     title: 'Learn',
-    description: 'Follow weekly AI roadmaps with courses, projects, and quizzes.',
+    description: 'Study with expert faculty through live classes, recorded videos, and practice tests.',
     icon: BookOpen,
     details: [
-      'Get personalized learning roadmaps',
-      'Access curated courses and resources',
-      'Complete hands-on projects',
-      'Take skill verification quizzes'
+      'Live interactive classes',
+      'Recorded video lectures',
+      'Comprehensive study material',
+      'Regular doubt clearing sessions'
     ],
     color: 'from-purple-500 to-purple-600'
   },
   {
     number: '03',
-    title: 'Verify & Apply',
-    description: 'Earn blockchain-verified badges and a shareable QR Resume.',
+    title: 'Get Certified',
+    description: 'Earn industry-recognized certificates and get 100% placement assistance.',
     icon: Award,
     details: [
-      'Earn verifiable skill badges',
-      'Create blockchain-backed credentials',
-      'Generate shareable QR Resume',
-      'Apply to matched job opportunities'
+      'Industry-recognized certificates',
+      'Mock tests and practice papers',
+      'Interview preparation',
+      '100% placement assistance'
     ],
     color: 'from-green-500 to-green-600'
   }
@@ -58,10 +58,10 @@ export function HowItWorks() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-5xl font-bold text-neutral-800 mb-6">
-            How It Works
+            How We Transform Your Career
           </h2>
           <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-            Transform your career in three simple steps with AI-powered guidance and blockchain-verified credentials.
+            Our proven 3-step process ensures your success with expert guidance, quality education, and guaranteed placement.
           </p>
         </motion.div>
 
@@ -127,23 +127,23 @@ export function HowItWorks() {
         >
           <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8 md:p-12">
             <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4">
-              Ready to Start Your Journey?
+              Ready to Start Your Success Story?
             </h3>
             <p className="text-lg text-neutral-600 mb-6 max-w-2xl mx-auto">
-              Join thousands of professionals who are already building their verified skill portfolio with mseducation.in
+              Join thousands of successful students who have achieved their career goals with MS Education
             </p>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => {
-                const element = document.querySelector('#cta')
+                const element = document.querySelector('#wallet')
                 if (element) {
                   element.scrollIntoView({ behavior: 'smooth' })
                 }
               }}
               className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold px-8 py-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Join the Waitlist
+              Explore Our Courses
             </motion.button>
           </div>
         </motion.div>

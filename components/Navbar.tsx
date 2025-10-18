@@ -7,12 +7,13 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 const navItems = [
   { name: 'How It Works', href: '#how-it-works' },
-  { name: 'Skill Wallet', href: '#wallet' },
-  { name: 'Jobs', href: '#jobs' },
+  { name: 'Courses', href: '#wallet' },
+  { name: 'Placements', href: '#jobs' },
   { name: 'AI Mentor', href: '#mentor' },
   { name: 'Campus', href: '#campus' },
   { name: 'Recruiters', href: '#recruiters' },
   { name: 'Pricing', href: '#pricing' },
+  { name: 'Achievements', href: '#achievements' },
   { name: 'FAQ', href: '#faq' },
 ]
 
