@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Plus, Search, Edit, Trash2, Eye, LogOut, BookOpen, Video, FileText } from 'lucide-react';
@@ -47,7 +47,23 @@ export default function AdminDashboard() {
     }
     
     fetchCourses();
-  }, [session, status, router, pagination.page, searchTerm]);
+  }, [session, status, router, pagination.page]);
+
+  // Debounced search effect
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (!session || session.user.role !== 'admin') {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      setPagination(prev => ({ ...prev, page: 1 }));
+      fetchCourses();
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   const fetchCourses = async () => {
     try {
@@ -97,10 +113,8 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPagination(prev => ({ ...prev, page: 1 }));
-    fetchCourses();
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
 
   const handleLogout = async () => {
@@ -158,18 +172,18 @@ export default function AdminDashboard() {
         {/* Actions Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 mb-8">
           <div className="flex-1 max-w-md">
-            <form onSubmit={handleSearch} className="relative">
+            <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
               </div>
               <input
                 type="text"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchChange}
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Search courses..."
               />
-            </form>
+            </div>
           </div>
           
           <Link
