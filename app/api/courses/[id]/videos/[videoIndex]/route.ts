@@ -51,7 +51,7 @@ export async function DELETE(
     course.videos.splice(videoIndex, 1);
     
     // Update order of remaining videos
-    course.videos.forEach((video, index) => {
+    course.videos.forEach((video: any, index: number) => {
       video.order = index;
     });
 

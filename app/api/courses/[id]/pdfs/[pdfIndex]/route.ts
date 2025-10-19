@@ -51,7 +51,7 @@ export async function DELETE(
     course.pdfs.splice(pdfIndex, 1);
     
     // Update order of remaining PDFs
-    course.pdfs.forEach((pdf, index) => {
+    course.pdfs.forEach((pdf: any, index: number) => {
       pdf.order = index;
     });
 

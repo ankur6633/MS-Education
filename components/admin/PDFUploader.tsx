@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, X, FileText ,Plus } from 'lucide-react';
+import { Upload, X, FileText, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface PDFUploaderProps {
