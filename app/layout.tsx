@@ -3,6 +3,7 @@ import { Inter, DM_Sans } from 'next/font/google'
 import './globals.css'
 import { ConsentBanner } from '@/components/ConsentBanner'
 import { Analytics } from '@/components/Analytics'
+import SessionProvider from '@/components/providers/SessionProvider'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -17,6 +18,7 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://mseducation.in'),
   title: 'mseducation.in - Make Verified Skills Your Career Currency',
   description: 'mseducation.in is your AI-powered career co-pilot — personalize your learning path, verify your skills, and land the right job faster. Built in India • DPDP Compliant • Launching Nov 1, 2025',
   keywords: 'AI career, skill verification, blockchain credentials, job matching, upskilling, India, DPDP compliant',
@@ -81,9 +83,11 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="antialiased">
-        {children}
-        <ConsentBanner />
-        <Analytics />
+        <SessionProvider>
+          {children}
+          <ConsentBanner />
+          <Analytics />
+        </SessionProvider>
       </body>
     </html>
   )
