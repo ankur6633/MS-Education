@@ -4,33 +4,33 @@ import { motion } from 'framer-motion'
 import { Mail, Linkedin, Twitter, Youtube, ArrowRight } from 'lucide-react'
 
 const footerLinks = {
-  product: [
-    { name: 'How It Works', href: '#how-it-works' },
-    { name: 'Skill Wallet', href: '#wallet' },
-    { name: 'AI Mentor', href: '#mentor' },
-    { name: 'Jobs', href: '#jobs' },
-    { name: 'Pricing', href: '#pricing' }
+  courses: [
+    { name: 'CA Foundation', href: '#wallet' },
+    { name: 'GATE & ESE', href: '#wallet' },
+    { name: 'UPSC Civil Services', href: '#wallet' },
+    { name: 'MBA Entrance', href: '#wallet' },
+    { name: 'Banking & SSC', href: '#wallet' }
   ],
   company: [
-    { name: 'About Us', href: '#' },
-    { name: 'Careers', href: '#' },
-    { name: 'Blog', href: '#' },
-    { name: 'Press', href: '#' },
-    { name: 'Contact', href: 'mailto:contact@mseducation.in' }
+    { name: 'About MS Education', href: '#' },
+    { name: 'Our Faculty', href: '#' },
+    { name: 'Success Stories', href: '#achievements' },
+    { name: 'News & Updates', href: '#' },
+    { name: 'Contact Us', href: 'mailto:contact@mseducation.in' }
   ],
-  resources: [
-    { name: 'Help Center', href: '#' },
-    { name: 'Documentation', href: '#' },
-    { name: 'API', href: '#' },
-    { name: 'Status', href: '#' },
-    { name: 'Community', href: '#' }
+  support: [
+    { name: 'Student Portal', href: '#' },
+    { name: 'Study Material', href: '#' },
+    { name: 'Mock Tests', href: '#' },
+    { name: 'Doubt Support', href: '#' },
+    { name: 'Career Guidance', href: '#' }
   ],
   legal: [
     { name: 'Privacy Policy', href: '#' },
-    { name: 'Terms of Service', href: '#' },
-    { name: 'Cookie Policy', href: '#' },
-    { name: 'DPDP Compliance', href: '#' },
-    { name: 'Security', href: '#' }
+    { name: 'Terms & Conditions', href: '#' },
+    { name: 'Refund Policy', href: '#' },
+    { name: 'Student Code of Conduct', href: '#' },
+    { name: 'Academic Integrity', href: '#' }
   ]
 }
 
@@ -66,14 +66,14 @@ export function Footer() {
               >
                 <div className="flex items-center space-x-2 mb-6">
                   <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">G</span>
+                    <span className="text-white font-bold text-sm">MS</span>
                   </div>
-                  <span className="text-xl font-bold">mseducation.in</span>
+                  <span className="text-xl font-bold">MS Education</span>
                 </div>
                 
                 <p className="text-neutral-400 mb-6 max-w-md">
-                  Make verified skills your career currency. AI-powered career co-pilot for personalized learning, 
-                  skill verification, and job matching.
+                  Transforming futures through quality education. Expert faculty, comprehensive courses, 
+                  and 100% placement assistance for your success.
                 </p>
                 
                 <div className="flex items-center space-x-4">
@@ -94,7 +94,7 @@ export function Footer() {
               </motion.div>
             </div>
 
-            {/* Product Links */}
+            {/* Courses Links */}
             <div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -102,9 +102,9 @@ export function Footer() {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 viewport={{ once: true }}
               >
-                <h3 className="text-lg font-semibold mb-6">Product</h3>
+                <h3 className="text-lg font-semibold mb-6">Courses</h3>
                 <ul className="space-y-3">
-                  {footerLinks.product.map((link) => (
+                  {footerLinks.courses.map((link) => (
                     <li key={link.name}>
                       <button
                         onClick={() => scrollToSection(link.href)}
@@ -142,7 +142,7 @@ export function Footer() {
               </motion.div>
             </div>
 
-            {/* Resources Links */}
+            {/* Support Links */}
             <div>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -150,9 +150,9 @@ export function Footer() {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 viewport={{ once: true }}
               >
-                <h3 className="text-lg font-semibold mb-6">Resources</h3>
+                <h3 className="text-lg font-semibold mb-6">Support</h3>
                 <ul className="space-y-3">
-                  {footerLinks.resources.map((link) => (
+                  {footerLinks.support.map((link) => (
                     <li key={link.name}>
                       <a
                         href={link.href}
@@ -204,7 +204,7 @@ export function Footer() {
             <div>
               <h3 className="text-xl font-semibold mb-2">Stay Updated</h3>
               <p className="text-neutral-400">
-                Get the latest updates on our launch and early access opportunities.
+                Get the latest updates on new courses, exam notifications, and success stories.
               </p>
             </div>
             <div className="flex w-full md:w-auto">
@@ -231,16 +231,16 @@ export function Footer() {
         >
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="text-neutral-400 text-sm">
-              © 2025 MS Sahil / mseducation.in. All rights reserved.
+              © 2025 MS Education. All rights reserved.
             </div>
             <div className="flex items-center space-x-6 text-sm text-neutral-400">
-              <span>Built in India</span>
+              <span>Established 2010</span>
               <span>•</span>
-              <span>DPDP Compliant</span>
+              <span>UGC Recognized</span>
               <span>•</span>
               <a href="mailto:contact@mseducation.in" className="hover:text-white transition-colors">
                 <Mail className="h-4 w-4 inline mr-1" />
-                contact@mseducation.in.ai
+                contact@mseducation.in
               </a>
             </div>
           </div>

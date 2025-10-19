@@ -298,7 +298,7 @@ export function Pricing() {
               Questions About Pricing?
             </h3>
             <p className="text-lg text-neutral-600 mb-6 max-w-2xl mx-auto">
-              We're here to help you choose the right plan for your needs. 
+              We&apos;re here to help you choose the right plan for your needs. 
               Contact our team for personalized recommendations.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

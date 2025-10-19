@@ -6,52 +6,52 @@ import { Plus, Minus } from 'lucide-react'
 
 const faqs = [
   {
-    question: 'What is mseducation.in?',
-    answer: 'mseducation.in is an AI-powered upskilling and job-readiness platform that helps you learn, verify, and showcase your skills in a blockchain-backed Skill Wallet.'
+    question: 'What courses does MS Education offer?',
+    answer: 'MS Education offers comprehensive courses in CA Foundation, GATE & ESE, UPSC Civil Services, MBA Entrance, Banking & SSC, and Railway & Defense exams with expert faculty and 100% placement assistance.'
   },
   {
-    question: 'How is it different from other edtech platforms?',
-    answer: 'mseducation.in combines personalized learning, verifiable credentials, and direct job routing — all in one place.'
+    question: 'How is MS Education different from other coaching institutes?',
+    answer: 'MS Education combines expert faculty, comprehensive study material, AI-powered study guidance, and guaranteed placement assistance — all in one platform with proven results.'
   },
   {
-    question: 'What is a Skill Wallet?',
-    answer: 'It\'s your digital portfolio containing verified certificates, projects, and scores — shareable via a live QR resume.'
+    question: 'What is the success rate of MS Education?',
+    answer: 'MS Education has a 95% success rate with over 50,000+ successful students placed in top companies and government jobs across India.'
   },
   {
-    question: 'How does the AI Mentor help?',
-    answer: 'The mentor uses real job data to recommend what to learn next, guide your interview prep, and improve your career readiness.'
+    question: 'How does the AI Study Mentor help students?',
+    answer: 'The AI Study Mentor provides personalized study plans, performance analytics, mock test preparation, and 24/7 academic support to help students achieve their goals.'
   },
   {
-    question: 'Can I use mseducation.in for free?',
-    answer: 'Yes. The free plan includes roadmap access, a Skill Wallet, and job browsing. Premium unlocks mentor and certifications.'
+    question: 'Are there any free trial classes available?',
+    answer: 'Yes. We offer free demo classes, career counseling sessions, and sample study material to help you make an informed decision.'
   },
   {
-    question: 'When is mseducation.in launching?',
-    answer: 'November 1, 2025 — with early pilots starting before launch.'
+    question: 'What is the fee structure for different courses?',
+    answer: 'Course fees vary by program. CA Foundation starts at ₹15,999, GATE preparation at ₹12,999, UPSC at ₹24,999, and MBA at ₹18,999 with flexible payment options.'
   },
   {
-    question: 'Are my data and credentials secure?',
-    answer: 'Yes. mseducation.in is DPDP-compliant, data encrypted, consent-driven, and supports export/delete requests.'
+    question: 'Is the study material provided comprehensive?',
+    answer: 'Yes. We provide complete study material including books, video lectures, practice tests, previous year papers, and mock tests for all courses.'
   },
   {
-    question: 'Can universities integrate with mseducation.in?',
-    answer: 'Yes. Institutions can access placement analytics and skill-readiness dashboards.'
+    question: 'Do you provide placement assistance?',
+    answer: 'Yes. We have a dedicated placement cell with partnerships with 500+ companies and government organizations to ensure 100% placement assistance.'
   },
   {
-    question: 'Do recruiters get verified access?',
-    answer: 'Yes. Recruiters can view verified skills via the QR Resume API and filter talent by readiness.'
+    question: 'Can I access classes online?',
+    answer: 'Yes. We offer both online and offline classes with live interactive sessions, recorded lectures, and mobile app access for flexible learning.'
   },
   {
-    question: 'What technologies power mseducation.in?',
-    answer: 'Built with LLMs, blockchain credentials, and advanced analytics — designed for scalability and trust.'
+    question: 'What support is available for doubt clearing?',
+    answer: 'We provide 24/7 doubt clearing support through our AI mentor, dedicated faculty, and student community forums.'
   },
   {
-    question: 'Does mseducation.in support government or skill missions?',
-    answer: 'It aligns with India\'s Skill Development and Digital India missions through verified, portable credentials.'
+    question: 'Are there any scholarship programs available?',
+    answer: 'Yes. We offer merit-based scholarships, early bird discounts, and special programs for economically weaker students.'
   },
   {
-    question: 'How do I join the waitlist?',
-    answer: 'Just fill out the form above; you\'ll receive launch updates and early access details via email.'
+    question: 'How do I enroll in a course?',
+    answer: 'You can enroll online through our website, visit our centers, or call our admission helpline. We also provide free career counseling to help you choose the right course.'
   }
 ]
 
@@ -77,7 +77,7 @@ export function FAQ() {
             <span className="gradient-text"> Questions</span>
           </h2>
           <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-            Everything you need to know about mseducation.in. Can't find the answer you're looking for? 
+            Everything you need to know about MS Education. Can&apos;t find the answer you&apos;re looking for? 
             Please contact our support team.
           </p>
         </motion.div>
@@ -144,7 +144,7 @@ export function FAQ() {
               Still Have Questions?
             </h3>
             <p className="text-lg text-neutral-600 mb-6 max-w-2xl mx-auto">
-              Our support team is here to help. Get in touch and we'll respond within 24 hours.
+              Our support team is here to help. Get in touch and we&apos;ll respond within 24 hours.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
@@ -155,14 +155,14 @@ export function FAQ() {
               </a>
               <button
                 onClick={() => {
-                  const element = document.querySelector('#cta')
+                  const element = document.querySelector('#wallet')
                   if (element) {
                     element.scrollIntoView({ behavior: 'smooth' })
                   }
                 }}
                 className="bg-white border border-primary-200 text-primary-600 font-semibold px-8 py-4 rounded-lg hover:bg-primary-50 transition-all duration-200"
               >
-                Join Waitlist
+                Explore Courses
               </button>
             </div>
           </div>

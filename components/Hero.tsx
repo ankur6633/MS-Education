@@ -66,9 +66,9 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6"
           >
-            <span className="gradient-text">Make Verified Skills</span>
+            <span className="gradient-text">Transform Your Future</span>
             <br />
-            <span className="text-neutral-800">Your Career Currency</span>
+            <span className="text-neutral-800">With Quality Education</span>
           </motion.h1>
 
           {/* Shimmer Effect */}
@@ -88,8 +88,8 @@ export function Hero() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl md:text-2xl text-neutral-600 mb-12 max-w-4xl mx-auto leading-relaxed"
           >
-            mseducation.in is your AI-powered career co-pilot — personalize your learning path, 
-            verify your skills, and land the right job faster.
+            MS Education offers comprehensive courses in CA, GATE, UPSC, MBA, and more. 
+            Expert faculty, proven results, and 100% placement assistance for your success.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -100,11 +100,11 @@ export function Hero() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
           >
             <Button
-              onClick={() => scrollToSection('#cta')}
+              onClick={() => scrollToSection('#wallet')}
               size="lg"
               className="group text-lg px-8 py-4"
             >
-              Join Waitlist
+              Explore Courses
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button
@@ -114,7 +114,7 @@ export function Hero() {
               className="group text-lg px-8 py-4"
             >
               <Play className="mr-2 h-5 w-5" />
-              See How It Works
+              Watch Demo
             </Button>
           </motion.div>
 
@@ -126,16 +126,16 @@ export function Hero() {
             className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto"
           >
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">10K+</div>
-              <div className="text-neutral-600">Early Signups</div>
+              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">50K+</div>
+              <div className="text-neutral-600">Students Trained</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">500+</div>
-              <div className="text-neutral-600">Partner Companies</div>
+              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">95%</div>
+              <div className="text-neutral-600">Success Rate</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">50+</div>
-              <div className="text-neutral-600">Campus Partners</div>
+              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">15+</div>
+              <div className="text-neutral-600">Years Experience</div>
             </div>
           </motion.div>
         </div>
