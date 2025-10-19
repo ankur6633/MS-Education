@@ -9,7 +9,7 @@
     "lint": "next lint",
     "sitemap": "next-sitemap",
     "setup-admin": "node setup-admin.js",
-    "netlify-build": "next build && next export"
+    "deploy": "node deploy.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",

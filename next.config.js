@@ -3,10 +3,12 @@ const nextConfig = {
   images: {
     domains: ['localhost', 'res.cloudinary.com'],
   },
-  output: 'standalone',
   experimental: {
     serverComponentsExternalPackages: ['mongoose'],
   },
+  // Vercel optimizations
+  swcMinify: true,
+  compress: true,
 }
 
 module.exports = nextConfig
