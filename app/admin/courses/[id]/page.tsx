@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Edit, Trash2, Plus, Video, FileText, Clock, Eye } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Plus, Video, FileText, Clock, Eye, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import VideoUploader from '@/components/admin/VideoUploader';
@@ -112,6 +112,18 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut({ 
+        callbackUrl: '/admin/login',
+        redirect: true 
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Logout failed. Please try again.');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -142,27 +154,38 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center py-4">
-            <Link
-              href="/admin"
-              className="flex items-center text-gray-600 hover:text-gray-900 mr-4"
-            >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              Back to Dashboard
-            </Link>
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-900">{course.title}</h1>
-              <p className="text-sm text-gray-600">
-                Created {new Date(course.createdAt).toLocaleDateString()}
-              </p>
+          <div className="flex items-center justify-between py-4">
+            <div className="flex items-center">
+              <Link
+                href="/admin"
+                className="flex items-center text-gray-600 hover:text-gray-900 mr-4"
+              >
+                <ArrowLeft className="h-5 w-5 mr-2" />
+                Back to Dashboard
+              </Link>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">{course.title}</h1>
+                <p className="text-sm text-gray-600">
+                  Created {new Date(course.createdAt).toLocaleDateString()}
+                </p>
+              </div>
             </div>
-            <Link
-              href={`/admin/courses/${course._id}/edit`}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Edit Course
-            </Link>
+            <div className="flex items-center space-x-4">
+              <Link
+                href={`/admin/courses/${course._id}/edit`}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Edit Course
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>

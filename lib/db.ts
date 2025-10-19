@@ -34,7 +34,6 @@ async function dbConnect() {
       connectTimeoutMS: 10000, // 10 seconds
       maxPoolSize: 10, // Maintain up to 10 socket connections
       retryWrites: true,
-      w: 'majority',
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {

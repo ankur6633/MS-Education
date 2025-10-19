@@ -104,7 +104,15 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: '/admin/login' });
+    try {
+      await signOut({ 
+        callbackUrl: '/admin/login',
+        redirect: true 
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Logout failed. Please try again.');
+    }
   };
 
   if (status === 'loading' || isLoading) {

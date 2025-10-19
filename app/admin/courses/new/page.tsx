@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Upload, X } from 'lucide-react';
+import { ArrowLeft, Upload, X, LogOut } from 'lucide-react';
 import Link from 'next/link';
 // Removed direct Cloudinary import - using API route instead
 
@@ -56,6 +56,18 @@ export default function NewCourse() {
   const removeThumbnail = () => {
     setThumbnail(null);
     setThumbnailPreview('');
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut({ 
+        callbackUrl: '/admin/login',
+        redirect: true 
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('Logout failed. Please try again.');
+    }
   };
 
   const onSubmit = async (data: CourseForm) => {
@@ -119,15 +131,24 @@ export default function NewCourse() {
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center py-4">
-            <Link
-              href="/admin"
-              className="flex items-center text-gray-600 hover:text-gray-900 mr-4"
+          <div className="flex items-center justify-between py-4">
+            <div className="flex items-center">
+              <Link
+                href="/admin"
+                className="flex items-center text-gray-600 hover:text-gray-900 mr-4"
+              >
+                <ArrowLeft className="h-5 w-5 mr-2" />
+                Back to Dashboard
+              </Link>
+              <h1 className="text-2xl font-bold text-gray-900">Create New Course</h1>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
             >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              Back to Dashboard
-            </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Create New Course</h1>
+              <LogOut className="h-4 w-4" />
+              <span>Logout</span>
+            </button>
           </div>
         </div>
       </header>
