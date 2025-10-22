@@ -4,6 +4,7 @@ import './globals.css'
 import { ConsentBanner } from '@/components/ConsentBanner'
 import { Analytics } from '@/components/Analytics'
 import SessionProvider from '@/components/providers/SessionProvider'
+import { UserProvider } from '@/components/providers/UserProvider'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -84,9 +85,11 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <SessionProvider>
-          {children}
-          <ConsentBanner />
-          <Analytics />
+          <UserProvider>
+            {children}
+            <ConsentBanner />
+            <Analytics />
+          </UserProvider>
         </SessionProvider>
       </body>
     </html>
