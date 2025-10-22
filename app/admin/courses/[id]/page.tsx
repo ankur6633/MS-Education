@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Edit, Trash2, Plus, Video, FileText, Clock, Eye, LogOut } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Plus, Video, FileText, Clock, Eye, LogOut , X} from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import VideoUploader from '@/components/admin/VideoUploader';
@@ -27,6 +27,8 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'videos' | 'pdfs'>('videos');
+  const [selectedPDF, setSelectedPDF] = useState<string | null>(null);
+  const [showPDFModal, setShowPDFModal] = useState(false);
 
   useEffect(() => {
     if (!session || session.user.role !== 'admin') {
@@ -99,6 +101,17 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
       console.error('Error deleting PDF:', error);
       toast.error('Failed to delete PDF');
     }
+  };
+
+  const handleViewPDF = (pdfUrl: string) => {
+    console.log('Opening PDF:', pdfUrl);
+    setSelectedPDF(pdfUrl);
+    setShowPDFModal(true);
+  };
+
+  const closePDFModal = () => {
+    setShowPDFModal(false);
+    setSelectedPDF(null);
   };
 
   const formatDuration = (seconds: number) => {
@@ -350,15 +363,13 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <a
-                              href={pdf.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              onClick={() => handleViewPDF(pdf.url)}
                               className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50"
                             >
                               <Eye className="h-3 w-3 mr-1" />
                               View
-                            </a>
+                            </button>
                             <button
                               onClick={() => handleDeletePDF(index)}
                               className="inline-flex items-center px-3 py-1.5 border border-red-300 text-xs font-medium rounded text-red-700 bg-white hover:bg-red-50"
@@ -376,6 +387,46 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
           </div>
         </div>
       </main>
+
+      {/* PDF Viewer Modal */}
+      {showPDFModal && selectedPDF && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-4 mx-auto p-5 w-11/12 h-5/6">
+            <div className="relative bg-white rounded-lg shadow-xl h-full flex flex-col">
+              <div className="flex items-center justify-between p-4 border-b">
+                <h3 className="text-lg font-medium text-gray-900">PDF Viewer</h3>
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2">
+                  </div>
+                  <a
+                    href={selectedPDF}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded text-gray-700 bg-white hover:bg-gray-50"
+                  >
+                    <Eye className="h-4 w-4 mr-1" />
+                    Open in New Tab
+                  </a>
+                  <button
+                    onClick={closePDFModal}
+                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded text-white bg-red-600 hover:bg-red-700"
+                  >
+                    <X className="h-4 w-4 mr-1" />
+                    Close
+                  </button>
+                </div>
+              </div>
+              <div className="flex-1 p-4">
+                <iframe
+                  src={selectedPDF}
+                  className="w-full h-full border-0"
+                  title="PDF Viewer"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

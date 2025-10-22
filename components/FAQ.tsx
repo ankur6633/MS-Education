@@ -95,7 +95,7 @@ export function FAQ() {
               >
                 <button
                   onClick={() => toggleFAQ(index)}
-                  className="w-full px-6 py-6 text-left flex items-center justify-between hover:bg-neutral-50 transition-colors duration-200 rounded-xl"
+                  className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-neutral-50 transition-colors duration-200 rounded-xl"
                 >
                   <h3 className="text-lg font-semibold text-neutral-800 pr-4">
                     {faq.question}
@@ -131,42 +131,6 @@ export function FAQ() {
           </div>
         </div>
 
-        {/* Contact CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mt-16"
-        >
-          <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8 md:p-12">
-            <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4">
-              Still Have Questions?
-            </h3>
-            <p className="text-lg text-neutral-600 mb-6 max-w-2xl mx-auto">
-              Our support team is here to help. Get in touch and we&apos;ll respond within 24 hours.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <a
-                href="mailto:contact@mseducation.in"
-                className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold px-8 py-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
-              >
-                Contact Support
-              </a>
-              <button
-                onClick={() => {
-                  const element = document.querySelector('#wallet')
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth' })
-                  }
-                }}
-                className="bg-white border border-primary-200 text-primary-600 font-semibold px-8 py-4 rounded-lg hover:bg-primary-50 transition-all duration-200"
-              >
-                Explore Courses
-              </button>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </section>
   )

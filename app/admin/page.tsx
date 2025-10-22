@@ -10,9 +10,22 @@ import Link from 'next/link';
 interface Course {
   _id: string;
   title: string;
+  hindiTitle: string;
   description: string;
   thumbnail: string;
   isPaid: boolean;
+  currentPrice?: number;
+  originalPrice?: number;
+  discount?: number;
+  duration: string;
+  students: string;
+  rating: number;
+  reviews: number;
+  features: string[];
+  badge: string;
+  badgeColor: string;
+  image: string;
+  theme: string;
   videos: Array<{ title: string; url: string; duration: number }>;
   pdfs: Array<{ title: string; url: string }>;
   createdAt: string;
@@ -38,34 +51,7 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    
-    if (!session || session.user.role !== 'admin') {
-      router.push('/admin/login');
-      return;
-    }
-    
-    fetchCourses();
-  }, [session, status, router, pagination.page]);
-
-  // Debounced search effect
-  useEffect(() => {
-    if (status === 'loading') return;
-    
-    if (!session || session.user.role !== 'admin') {
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
-      setPagination(prev => ({ ...prev, page: 1 }));
-      fetchCourses();
-    }, 500); // 500ms delay
-
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
-
-  const fetchCourses = async () => {
+  const fetchCourses = useCallback(async () => {
     try {
       setIsLoading(true);
       const params = new URLSearchParams({
@@ -89,7 +75,34 @@ export default function AdminDashboard() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit, searchTerm]);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (!session || session.user.role !== 'admin') {
+      router.push('/admin/login');
+      return;
+    }
+    
+    fetchCourses();
+  }, [session, status, router, fetchCourses]);
+
+  // Debounced search effect
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (!session || session.user.role !== 'admin') {
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      setPagination(prev => ({ ...prev, page: 1 }));
+      fetchCourses();
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, fetchCourses, session, status]);
 
   const handleDeleteCourse = async (courseId: string) => {
     if (!confirm('Are you sure you want to delete this course?')) {
@@ -113,9 +126,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
 
   const handleLogout = async () => {
     try {
@@ -171,20 +181,20 @@ export default function AdminDashboard() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Actions Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0 mb-8">
-          <div className="flex-1 max-w-md">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Search courses..."
-              />
-            </div>
-          </div>
+           <div className="flex-1 max-w-md">
+             <div className="relative">
+               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                 <Search className="h-5 w-5 text-gray-400" />
+               </div>
+               <input
+                 type="text"
+                 value={searchTerm}
+                 onChange={(e) => setSearchTerm(e.target.value)}
+                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                 placeholder="Search courses..."
+               />
+             </div>
+           </div>
           
           <Link
             href="/admin/courses/new"
@@ -230,14 +240,14 @@ export default function AdminDashboard() {
                     <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
                       {course.title}
                     </h3>
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      course.isPaid 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-blue-100 text-blue-800'
-                    }`}>
-                      {course.isPaid ? 'Paid' : 'Free'}
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${course.badgeColor} text-white`}>
+                      {course.badge}
                     </span>
                   </div>
+                  
+                  <p className="mt-1 text-sm text-primary-600 font-medium">
+                    {course.hindiTitle}
+                  </p>
                   
                   <p className="mt-2 text-sm text-gray-600 line-clamp-3">
                     {course.description}
@@ -251,6 +261,22 @@ export default function AdminDashboard() {
                     <div className="flex items-center">
                       <FileText className="h-4 w-4 mr-1" />
                       {course.pdfs.length} PDFs
+                    </div>
+                  </div>
+                  
+                  <div className="mt-3 flex items-center justify-between text-sm">
+                    <div className="text-gray-600">
+                      {course.isPaid ? (
+                        <span className="font-semibold">₹{course.currentPrice?.toLocaleString()}</span>
+                      ) : (
+                        <span className="font-semibold text-green-600">Free</span>
+                      )}
+                      {course.discount && (
+                        <span className="ml-2 text-green-600 font-medium">{course.discount}% OFF</span>
+                      )}
+                    </div>
+                    <div className="text-gray-500">
+                      {course.duration} • {course.students} students
                     </div>
                   </div>
                   

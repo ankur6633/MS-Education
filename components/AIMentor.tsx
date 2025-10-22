@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/Card'
-import { MessageCircle, BookOpen, Users, Brain, Shield, Zap } from 'lucide-react'
+import { MessageCircle, BookOpen, Users, Brain, Zap } from 'lucide-react'
 
 const features = [
   {
@@ -27,20 +27,10 @@ const features = [
   }
 ]
 
-const mentorCapabilities = [
-  'Exam pattern analysis',
-  'Study schedule optimization',
-  'Weak area identification',
-  'Mock test preparation',
-  'Time management strategies',
-  'Stress management techniques',
-  'Revision planning',
-  'Performance tracking'
-]
 
 export function AIMentor() {
   return (
-    <section id="mentor" className="section-padding gradient-bg">
+    <section id="mentor" className="py-10 gradient-bg">
       <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -183,56 +173,6 @@ export function AIMentor() {
           </motion.div>
         </div>
 
-        {/* Capabilities */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="mb-16"
-        >
-          <h3 className="text-2xl font-bold text-neutral-800 mb-8 text-center">
-            What Your AI Study Mentor Can Do
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {mentorCapabilities.map((capability, index) => (
-              <motion.div
-                key={capability}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white/80 backdrop-blur-sm rounded-lg p-4 text-center shadow-md hover:shadow-lg transition-shadow"
-              >
-                <Shield className="h-6 w-6 text-primary-500 mx-auto mb-2" />
-                <p className="text-sm font-medium text-neutral-700">{capability}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Trust Indicators */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center"
-        >
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-            <div className="text-3xl font-bold gradient-text mb-2">95%</div>
-            <div className="text-neutral-600">Student Success Rate</div>
-          </div>
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-            <div className="text-3xl font-bold gradient-text mb-2">24/7</div>
-            <div className="text-neutral-600">Study Support</div>
-          </div>
-          <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-            <div className="text-3xl font-bold gradient-text mb-2">50K+</div>
-            <div className="text-neutral-600">Study Questions Answered</div>
-          </div>
-        </motion.div>
       </div>
     </section>
   )

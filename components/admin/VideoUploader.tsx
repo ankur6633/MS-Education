@@ -17,14 +17,49 @@ export default function VideoUploader({ courseId, onUpload }: VideoUploaderProps
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [videoTitle, setVideoTitle] = useState('');
   const [videoDuration, setVideoDuration] = useState(0);
+  const [isDetectingDuration, setIsDetectingDuration] = useState(false);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const getVideoDuration = useCallback((file: File): Promise<number> => {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      
+      video.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(video.src);
+        resolve(Math.round(video.duration));
+      };
+      
+      video.onerror = () => {
+        window.URL.revokeObjectURL(video.src);
+        reject(new Error('Failed to load video metadata'));
+      };
+      
+      video.src = URL.createObjectURL(file);
+    });
+  }, []);
+
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
       setSelectedFile(file);
       setShowModal(true);
+      setIsDetectingDuration(true);
+      
+      try {
+        console.log('Getting video duration...');
+        const duration = await getVideoDuration(file);
+        setVideoDuration(duration);
+        console.log(`Video duration: ${duration} seconds`);
+        toast.success(`Video duration detected: ${Math.floor(duration / 60)}:${(duration % 60).toString().padStart(2, '0')}`);
+      } catch (error) {
+        console.error('Error getting video duration:', error);
+        toast.error('Could not detect video duration automatically');
+        setVideoDuration(0);
+      } finally {
+        setIsDetectingDuration(false);
+      }
     }
-  }, []);
+  }, [getVideoDuration]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -75,11 +110,12 @@ export default function VideoUploader({ courseId, onUpload }: VideoUploaderProps
   };
 
   const closeModal = () => {
-    if (!isUploading) {
+    if (!isUploading && !isDetectingDuration) {
       setShowModal(false);
       setSelectedFile(null);
       setVideoTitle('');
       setVideoDuration(0);
+      setIsDetectingDuration(false);
     }
   };
 
@@ -101,8 +137,8 @@ export default function VideoUploader({ courseId, onUpload }: VideoUploaderProps
                 <h3 className="text-lg font-medium text-gray-900">Upload Video</h3>
                 <button
                   onClick={closeModal}
-                  disabled={isUploading}
-                  className="text-gray-400 hover:text-gray-600"
+                  disabled={isUploading || isDetectingDuration}
+                  className="text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <X className="h-6 w-6" />
                 </button>
@@ -162,15 +198,28 @@ export default function VideoUploader({ courseId, onUpload }: VideoUploaderProps
                   <div>
                     <label htmlFor="videoDuration" className="block text-sm font-medium text-gray-700">
                       Duration (seconds)
+                      {isDetectingDuration && (
+                        <span className="ml-2 text-xs text-blue-600">
+                          <Clock className="inline h-3 w-3 animate-spin" /> Detecting...
+                        </span>
+                      )}
                     </label>
                     <input
                       id="videoDuration"
                       type="number"
                       value={videoDuration}
                       onChange={(e) => setVideoDuration(parseInt(e.target.value) || 0)}
-                      className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                      placeholder="Enter duration in seconds"
+                      disabled={isDetectingDuration}
+                      className={`mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 ${
+                        isDetectingDuration ? 'bg-gray-100 cursor-not-allowed' : ''
+                      }`}
+                      placeholder={isDetectingDuration ? "Detecting duration..." : "Enter duration in seconds"}
                     />
+                    {videoDuration > 0 && (
+                      <p className="mt-1 text-sm text-gray-500">
+                        Duration: {Math.floor(videoDuration / 60)}:{(videoDuration % 60).toString().padStart(2, '0')}
+                      </p>
+                    )}
                   </div>
 
                   {isUploading && (
@@ -191,8 +240,8 @@ export default function VideoUploader({ courseId, onUpload }: VideoUploaderProps
                   <div className="flex items-center justify-end space-x-3 pt-4">
                     <button
                       onClick={closeModal}
-                      disabled={isUploading}
-                      className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                      disabled={isUploading || isDetectingDuration}
+                      className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Cancel
                     </button>

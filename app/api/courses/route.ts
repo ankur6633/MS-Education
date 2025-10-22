@@ -65,20 +65,56 @@ export async function POST(request: NextRequest) {
     await dbConnect();
 
     const body = await request.json();
-    const { title, description, thumbnail, isPaid } = body;
+    const { 
+      title, 
+      hindiTitle, 
+      description, 
+      thumbnail, 
+      isPaid, 
+      currentPrice, 
+      originalPrice, 
+      duration, 
+      students, 
+      rating, 
+      reviews, 
+      features, 
+      badge, 
+      badgeColor, 
+      image, 
+      theme 
+    } = body;
 
-    if (!title || !description || !thumbnail) {
+    if (!title || !hindiTitle || !description || !thumbnail || !duration || !students || !rating || !reviews || !features) {
       return NextResponse.json(
-        { error: 'Title, description, and thumbnail are required' },
+        { error: 'All required fields must be provided' },
         { status: 400 }
       );
     }
 
+    // Calculate discount if both prices are provided
+    let discount = undefined;
+    if (isPaid && currentPrice && originalPrice && originalPrice > currentPrice) {
+      discount = Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
+    }
+
     const course = new Course({
       title,
+      hindiTitle,
       description,
       thumbnail,
       isPaid: isPaid || false,
+      currentPrice: isPaid ? currentPrice : undefined,
+      originalPrice: isPaid ? originalPrice : undefined,
+      discount,
+      duration,
+      students,
+      rating,
+      reviews,
+      features,
+      badge: badge || 'NEW',
+      badgeColor: badgeColor || 'bg-blue-500',
+      image: image || '📚',
+      theme: theme || 'default',
       videos: [],
       pdfs: []
     });
