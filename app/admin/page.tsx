@@ -123,6 +123,7 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error('Error deleting course:', error);
       toast.error('Failed to delete course');
+      
     }
   };
 
