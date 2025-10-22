@@ -49,7 +49,25 @@ export async function PUT(
     await dbConnect();
 
     const body = await request.json();
-    const { title, description, thumbnail, isPaid } = body;
+    const { 
+      title, 
+      hindiTitle, 
+      description, 
+      thumbnail, 
+      isPaid, 
+      currentPrice, 
+      originalPrice, 
+      duration, 
+      students, 
+      rating, 
+      reviews, 
+      features, 
+      badge, 
+      badgeColor, 
+      image, 
+      theme,
+      discount
+    } = body;
 
     const course = await Course.findById(params.id);
     
@@ -59,9 +77,22 @@ export async function PUT(
 
     // Update course fields
     if (title) course.title = title;
+    if (hindiTitle) course.hindiTitle = hindiTitle;
     if (description) course.description = description;
     if (thumbnail) course.thumbnail = thumbnail;
     if (typeof isPaid === 'boolean') course.isPaid = isPaid;
+    if (currentPrice !== undefined) course.currentPrice = currentPrice;
+    if (originalPrice !== undefined) course.originalPrice = originalPrice;
+    if (discount !== undefined) course.discount = discount;
+    if (duration) course.duration = duration;
+    if (students) course.students = students;
+    if (rating !== undefined) course.rating = rating;
+    if (reviews !== undefined) course.reviews = reviews;
+    if (features) course.features = features;
+    if (badge) course.badge = badge;
+    if (badgeColor) course.badgeColor = badgeColor;
+    if (image) course.image = image;
+    if (theme) course.theme = theme;
 
     await course.save();
 

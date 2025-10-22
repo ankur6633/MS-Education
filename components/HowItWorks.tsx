@@ -48,16 +48,16 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="section-padding bg-white">
+      <section id="how-it-works" className="bg-white ">
       <div className="container-custom">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 2 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-neutral-800 mb-6">
+          <h2 className="text-3xl md:text-4xl text-neutral-800 mb-6">
             How We Transform Your Career
           </h2>
           <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
@@ -117,36 +117,6 @@ export function HowItWorks() {
           ))}
         </div>
 
-        {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="text-center"
-        >
-          <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8 md:p-12">
-            <h3 className="text-2xl md:text-3xl font-bold text-neutral-800 mb-4">
-              Ready to Start Your Success Story?
-            </h3>
-            <p className="text-lg text-neutral-600 mb-6 max-w-2xl mx-auto">
-              Join thousands of successful students who have achieved their career goals with MS Education
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => {
-                const element = document.querySelector('#wallet')
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' })
-                }
-              }}
-              className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold px-8 py-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              Explore Our Courses
-            </motion.button>
-          </div>
-        </motion.div>
       </div>
     </section>
   )

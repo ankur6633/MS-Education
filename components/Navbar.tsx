@@ -8,7 +8,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 const navItems = [
   { name: 'How It Works', href: '#how-it-works' },
   { name: 'Courses', href: '#courses' },
-  { name: 'Placements', href: '#jobs' },
   { name: 'AI Mentor', href: '#mentor' },
   { name: 'Campus', href: '#campus' },
   { name: 'Achievements', href: '#achievements' },
