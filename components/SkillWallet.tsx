@@ -20,6 +20,7 @@ interface Course {
   badge?: string;
   badgeColor?: string;
   image?: string;
+  thumbnail?: string;
   theme?: string;
   isPaid?: boolean;
 }
@@ -101,22 +102,30 @@ export function SkillWallet() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group flex flex-col h-full"
             >
-              {/* Course Image/Icon */}
-              <div className="relative h-36 bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center">
+              {/* Course Image/Thumbnail */}
+              <div className="relative h-36 bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center overflow-hidden">
                 {/* Badge */}
-                <div className={`absolute top-3 right-3 ${course.badgeColor || 'bg-gray-500'} text-white px-2 py-1 rounded-full text-xs font-bold`}>
+                <div className={`absolute top-3 right-3 ${course.badgeColor || 'bg-gray-500'} text-white px-2 py-1 rounded-full text-xs font-bold z-10`}>
                   {course.badge || 'NEW'}
                 </div>
                 
-                {/* Course Icon */}
-                <div className="text-4xl">{course.image || '📚'}</div>
+                {/* Course Thumbnail or Icon */}
+                {course.thumbnail ? (
+                  <img 
+                    src={course.thumbnail} 
+                    alt={course.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-4xl">{course.image || '📚'}</div>
+                )}
                 
                 {/* MS Education Logo */}
-                <div className="absolute bottom-3 left-3 flex items-center">
+                <div className="absolute bottom-3 left-3 flex items-center z-10">
                   <div className="w-6 h-6 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mr-2">
                     <span className="text-white font-bold text-xs">MS</span>
                   </div>
-                  <span className="text-xs font-semibold text-neutral-700">MS Education</span>
+                  <span className="text-xs font-semibold text-white bg-black bg-opacity-50 px-2 py-1 rounded">MS Education</span>
                 </div>
               </div>
 
