@@ -74,7 +74,8 @@ class OTPStorage {
   // Clean expired OTPs
   cleanExpired(): void {
     const now = new Date();
-    for (const [mobile, data] of this.storage.entries()) {
+    const entries = Array.from(this.storage.entries());
+    for (const [mobile, data] of entries) {
       if (now > data.expiry) {
         this.storage.delete(mobile);
         console.log(`Cleaned expired OTP for ${mobile}`);
