@@ -217,24 +217,15 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50"
-            onClick={onClose}
-          />
-
           {/* Sidebar */}
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50"
+            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            className="fixed right-0 top-0 h-screen w-96 max-w-[90vw] bg-white shadow-2xl z-[70] overflow-y-auto"
           >
-            <div className="flex flex-col h-full">
+            <div className="flex flex-col h-screen">
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-neutral-200">
                 <div className="flex items-center space-x-2">
@@ -252,7 +243,7 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
               </div>
 
               {/* Content */}
-              <div className="flex-1 p-6 overflow-y-auto">
+              <div className="flex-1 p-6 overflow-y-auto min-h-0">
                 {/* Message Display */}
                 {message && (
                   <motion.div
@@ -418,10 +409,7 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                 ) : (
                   /* Login Options */
                   <div className="space-y-6">
-                    <div>
-                      <h2 className="text-2xl font-bold text-neutral-800 mb-2">Welcome Back!</h2>
-                      <p className="text-neutral-600">Choose your preferred login method</p>
-                    </div>
+                   
 
                     {/* Mobile Login */}
                     <div className="space-y-4">

@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Star, Clock, Users, Award, CheckCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 
 interface Course {
   _id: string;
@@ -220,9 +221,11 @@ export function SkillWallet() {
                 </div>
 
                 {/* CTA Button */}
-                <button className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold py-2.5 rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 transform group-hover:scale-105 mt-auto">
-                  Enroll Now
-                </button>
+                <Link href={`/courses/${course._id}`}>
+                  <button className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold py-2.5 rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 transform group-hover:scale-105 mt-auto">
+                    Enroll Now
+                  </button>
+                </Link>
               </div>
             </motion.div>
           ))}
@@ -238,9 +241,12 @@ export function SkillWallet() {
           <p className="text-neutral-600 mb-4">
             Join over 50,000+ successful students who have achieved their career goals with MS Education
           </p>
-          <button className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold px-8 py-3 rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-300">
+          <a 
+            href="/courses"
+            className="inline-block bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold px-8 py-3 rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-300"
+          >
             View All Courses
-          </button>
+          </a>
         </motion.div>
       </div>
     </section>

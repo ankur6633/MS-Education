@@ -2,18 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/Button'
-import { Menu, X, ArrowRight, LogOut, User } from 'lucide-react'
+import { Menu, X, ArrowRight, LogOut, User, Search, Settings, ShoppingBag, Bell, Trophy, HelpCircle, Crown } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { LoginSidebar } from '@/components/LoginSidebar'
 import { useUser } from '@/components/providers/UserProvider'
+import Link from 'next/link'
 
 const navItems = [
-  { name: 'How It Works', href: '#how-it-works' },
-  { name: 'Courses', href: '#courses' },
-  { name: 'AI Mentor', href: '#mentor' },
-  { name: 'Campus', href: '#campus' },
-  { name: 'Achievements', href: '#achievements' },
-  { name: 'FAQ', href: '#faq' },
+  { name: 'Courses', href: '/courses' },
 ]
 
 export function Navbar() {
@@ -21,6 +17,7 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isLoginSidebarOpen, setIsLoginSidebarOpen] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const { user, logout } = useUser()
 
   useEffect(() => {
@@ -31,10 +28,36 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showUserMenu) {
+        const target = event.target as Element
+        if (!target.closest('[data-user-menu]')) {
+          setShowUserMenu(false)
+        }
+      }
+      if (isMobileMenuOpen) {
+        const target = event.target as Element
+        if (!target.closest('[data-mobile-menu]')) {
+          setIsMobileMenuOpen(false)
+        }
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showUserMenu, isMobileMenuOpen])
+
   const scrollToSection = (href: string) => {
-    const element = document.querySelector(href)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+    if (href.startsWith('#')) {
+      const element = document.querySelector(href)
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    } else {
+      // Navigate to page
+      window.location.href = href
     }
     setIsMobileMenuOpen(false)
   }
@@ -46,6 +69,14 @@ export function Navbar() {
   const handleLogout = () => {
     logout()
     setShowUserMenu(false)
+  }
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchQuery.trim()) {
+      // Navigate to courses page with search query
+      window.location.href = `/courses?search=${encodeURIComponent(searchQuery.trim())}`
+    }
   }
 
   return (
@@ -60,16 +91,39 @@ export function Navbar() {
     >
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center space-x-2"
-          >
-            <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">MS</span>
-            </div>
-            <span className="text-xl font-bold gradient-text whitespace-nowrap">MS Education</span>
-          </motion.div>
+          {/* Logo and Desktop Search */}
+          <div className="flex items-center space-x-4">
+            <Link href="/">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center space-x-2 cursor-pointer"
+              >
+                <div className="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">MS</span>
+                </div>
+                <span className="text-xl font-bold gradient-text whitespace-nowrap">MS Education</span>
+              </motion.div>
+            </Link>
+            
+            {/* Desktop Search Bar - Only visible on large screens */}
+            <form onSubmit={handleSearch} className="hidden lg:block">
+              <div className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="What do you want to learn?"
+                  className="w-64 px-4 py-2 pr-12 text-sm border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm"
+                />
+                <button 
+                  type="submit"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-primary-500 hover:bg-primary-600 text-white rounded-full flex items-center justify-center transition-colors"
+                >
+                  <Search className="h-4 w-4" />
+                </button>
+              </div>
+            </form>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
@@ -87,7 +141,7 @@ export function Navbar() {
           {/* CTA Button or User Menu */}
           <div className="hidden lg:flex items-center space-x-4">
             {user ? (
-              <div className="relative">
+              <div className="relative" data-user-menu>
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-neutral-100 transition-colors"
@@ -107,18 +161,65 @@ export function Navbar() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-neutral-200 py-2 z-50"
+                      className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-neutral-200 py-2 z-50"
                     >
-                      <div className="px-4 py-2 border-b border-neutral-100">
+                      {/* User Info */}
+                      <div className="px-4 py-3 border-b border-neutral-100">
                         <p className="text-sm font-medium text-neutral-800">{user.name}</p>
                         <p className="text-xs text-neutral-500">{user.email}</p>
                       </div>
+                      
+                      {/* Menu Items */}
+                      <div className="py-2">
+                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                          <User className="h-4 w-4" />
+                          <span>Profile</span>
+                        </button>
+                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                          <ShoppingBag className="h-4 w-4" />
+                          <span>My Purchases</span>
+                        </button>
+                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                          <Settings className="h-4 w-4" />
+                          <span>Settings</span>
+                        </button>
+                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                          <Bell className="h-4 w-4" />
+                          <span>Updates</span>
+                        </button>
+                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                          <Trophy className="h-4 w-4" />
+                          <span>Accomplishments</span>
+                        </button>
+                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                          <HelpCircle className="h-4 w-4" />
+                          <span>Help Center</span>
+                        </button>
+                      </div>
+                      
+                      {/* Separator */}
+                      <div className="border-t border-neutral-100 my-2"></div>
+                      
+                      {/* Premium Section */}
+                      <div className="px-4 py-3">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <span className="text-sm font-medium text-neutral-800">Get</span>
+                          <span className="text-sm font-medium text-blue-600">MS Education</span>
+                          <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded">PLUS</span>
+                        </div>
+                        <p className="text-xs text-neutral-500">Access 10,000+ courses</p>
+                      </div>
+                      
+                      {/* Separator */}
+                      <div className="border-t border-neutral-100 my-2"></div>
+                      
+                      {/* Logout */}
                       <button
                         onClick={handleLogout}
-                        className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 transition-colors"
+                        className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
                       >
                         <LogOut className="h-4 w-4" />
-                        <span>Logout</span>
+                        <span>Log Out</span>
                       </button>
                     </motion.div>
                   )}
@@ -139,6 +240,7 @@ export function Navbar() {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="lg:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+            data-mobile-menu
           >
             {isMobileMenuOpen ? (
               <X className="h-6 w-6" />
@@ -157,8 +259,28 @@ export function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden bg-white border-t border-neutral-200 shadow-lg"
+            data-mobile-menu
           >
             <div className="container-custom py-4 space-y-4">
+              {/* Mobile Search Bar */}
+              <form onSubmit={handleSearch} className="mb-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="What do you want to learn?"
+                    className="w-full px-4 py-3 pr-12 text-sm border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm"
+                  />
+                  <button 
+                    type="submit"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-primary-500 hover:bg-primary-600 text-white rounded-full flex items-center justify-center transition-colors"
+                  >
+                    <Search className="h-4 w-4" />
+                  </button>
+                </div>
+              </form>
+              
               {navItems.map((item) => (
                 <button
                   key={item.name}
@@ -170,17 +292,58 @@ export function Navbar() {
               ))}
               {user ? (
                 <div className="space-y-3">
+                  {/* User Info */}
                   <div className="px-3 py-2 bg-neutral-50 rounded-lg">
                     <p className="text-sm font-medium text-neutral-800">{user.name}</p>
                     <p className="text-xs text-neutral-500">{user.email}</p>
                   </div>
+                  
+                  {/* Menu Items */}
+                  <div className="space-y-1">
+                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                      <User className="h-4 w-4" />
+                      <span>Profile</span>
+                    </button>
+                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                      <ShoppingBag className="h-4 w-4" />
+                      <span>My Purchases</span>
+                    </button>
+                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                      <Settings className="h-4 w-4" />
+                      <span>Settings</span>
+                    </button>
+                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                      <Bell className="h-4 w-4" />
+                      <span>Updates</span>
+                    </button>
+                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                      <Trophy className="h-4 w-4" />
+                      <span>Accomplishments</span>
+                    </button>
+                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                      <HelpCircle className="h-4 w-4" />
+                      <span>Help Center</span>
+                    </button>
+                  </div>
+                  
+                  {/* Premium Section */}
+                  <div className="px-3 py-2 bg-blue-50 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-1">
+                      <span className="text-sm font-medium text-neutral-800">Get</span>
+                      <span className="text-sm font-medium text-blue-600">MS Education</span>
+                      <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded">PLUS</span>
+                    </div>
+                    <p className="text-xs text-neutral-500">Access 10,000+ courses</p>
+                  </div>
+                  
+                  {/* Logout */}
                   <Button
                     onClick={handleLogout}
                     variant="outline"
                     className="w-full"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Logout
+                    Log Out
                   </Button>
                 </div>
               ) : (
