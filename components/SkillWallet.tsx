@@ -89,7 +89,7 @@ export function SkillWallet() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg text-neutral-600 max-w-2xl mx-auto"
           >
-            Choose from our wide range of courses designed by experts. Get certified, get placed, get ahead in your career.
+            Choose from our wide range of courses designed by experts.
           </motion.p>
         </div>
 
