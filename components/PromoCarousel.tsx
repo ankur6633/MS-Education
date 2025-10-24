@@ -118,7 +118,7 @@ export function PromoCarousel() {
   }
 
   return (
-    <section className="relative w-full h-[400px] sm:h-96 md:h-[400px] overflow-hidden mt-10">
+    <section className="relative w-full h-[400px] sm:h-96 md:h-[400px] overflow-hidden mt-14">
       {/* Carousel Container */}
       <div className="relative w-full h-full">
         <div className="relative w-full h-full overflow-hidden">

@@ -100,7 +100,7 @@ export function Hero() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-7"
           >
             <Button
-              onClick={() => scrollToSection('#wallet')}
+              onClick={() => window.location.href = '/courses'}
               size="lg"
               className="group text-lg px-8 py-4"
             >
@@ -118,26 +118,6 @@ export function Hero() {
             </Button>
           </motion.div>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto"
-          >
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">50K+</div>
-              <div className="text-neutral-600">Students Trained</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">95%</div>
-              <div className="text-neutral-600">Success Rate</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">15+</div>
-              <div className="text-neutral-600">Years Experience</div>
-            </div>
-          </motion.div>
         </div>
       </div>
 
