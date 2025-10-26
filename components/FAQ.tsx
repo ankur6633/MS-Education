@@ -79,6 +79,7 @@ export function FAQ() {
           <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
             Everything you need to know about MS Education. Can&apos;t find the answer you&apos;re looking for? 
             Please contact our support team.
+            
           </p>
         </motion.div>
 
