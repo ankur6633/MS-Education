@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Star, Clock, Users, Award, CheckCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface Course {
   _id: string;
@@ -112,9 +113,11 @@ export function SkillWallet() {
                 
                 {/* Course Thumbnail or Icon */}
                 {course.thumbnail ? (
-                  <img 
+                  <Image 
                     src={course.thumbnail} 
                     alt={course.title}
+                    width={800}
+                    height={144}
                     className="w-full h-full object-cover"
                   />
                 ) : (

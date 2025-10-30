@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ArrowLeft, Edit, Trash2, Plus, Video, FileText, Clock, Eye, LogOut , X} from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 import VideoUploader from '@/components/admin/VideoUploader';
 import PDFUploader from '@/components/admin/PDFUploader';
 
@@ -37,6 +38,7 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
     }
     
     fetchCourse();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, router, params.id]);
 
   const fetchCourse = async () => {
@@ -208,9 +210,11 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
         {/* Course Overview */}
         <div className="bg-white shadow-sm rounded-lg p-6 mb-8">
           <div className="flex items-start space-x-6">
-            <img
+            <Image
               src={course.thumbnail}
               alt={course.title}
+              width={128}
+              height={96}
               className="w-32 h-24 object-cover rounded-lg"
             />
             <div className="flex-1">

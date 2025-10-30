@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface Course {
   _id: string;
@@ -289,9 +290,11 @@ export default function CoursesPage() {
                       
                       {/* Course Thumbnail or Icon */}
                       {course.thumbnail ? (
-                        <img 
+                        <Image 
                           src={course.thumbnail} 
                           alt={course.title}
+                          width={800}
+                          height={192}
                           className="w-full h-full object-cover"
                         />
                       ) : (

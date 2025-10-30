@@ -9,6 +9,7 @@ import { z } from 'zod';
 import toast from 'react-hot-toast';
 import { ArrowLeft, Upload, X, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 // Removed direct Cloudinary import - using API route instead
 
 const courseSchema = z.object({
@@ -378,9 +379,11 @@ export default function NewCourse() {
                 </div>
               ) : (
                 <div className="relative">
-                  <img
+                  <Image
                     src={thumbnailPreview}
                     alt="Thumbnail preview"
+                    width={800}
+                    height={192}
                     className="w-full h-48 object-cover rounded-lg"
                   />
                   <button
