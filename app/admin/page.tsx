@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Plus, Search, Edit, Trash2, Eye, LogOut, BookOpen, Video, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface Course {
   _id: string;
@@ -229,9 +230,11 @@ export default function AdminDashboard() {
             {courses.map((course) => (
               <div key={course._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 <div className="aspect-w-16 aspect-h-9">
-                  <img
+                  <Image
                     src={course.thumbnail}
                     alt={course.title}
+                    width={800}
+                    height={192}
                     className="w-full h-48 object-cover"
                   />
                 </div>

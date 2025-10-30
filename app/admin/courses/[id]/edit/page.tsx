@@ -9,6 +9,7 @@ import { z } from 'zod';
 import toast from 'react-hot-toast';
 import { ArrowLeft, Upload, X, LogOut, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 // Removed direct Cloudinary import - using API route instead
 
 const courseSchema = z.object({
@@ -108,6 +109,7 @@ export default function EditCourse({ params }: { params: { id: string } }) {
     if (!hasInitialized && !formHasChanges) {
       fetchCourse();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, router, params.id, hasInitialized, formHasChanges]);
 
   // Add a focus event listener to refresh data when user comes back to the page
@@ -124,6 +126,7 @@ export default function EditCourse({ params }: { params: { id: string } }) {
 
     window.addEventListener('focus', handleFocus);
     return () => window.removeEventListener('focus', handleFocus);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasInitialized, course, formHasChanges]);
 
   const fetchCourse = async () => {
@@ -513,9 +516,11 @@ export default function EditCourse({ params }: { params: { id: string } }) {
             <div className="space-y-4">
               {thumbnailPreview ? (
                 <div className="relative">
-                  <img
+                  <Image
                     src={thumbnailPreview}
                     alt="Thumbnail preview"
+                    width={800}
+                    height={192}
                     className="w-full h-48 object-cover rounded-lg"
                   />
                   <button

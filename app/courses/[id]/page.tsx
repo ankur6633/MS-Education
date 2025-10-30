@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, Star, Clock, Users, Play, CheckCircle, Download, Share2, BookOpen, Award, Calendar, Globe, Lock, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useUser } from '@/components/providers/UserProvider'
 
 interface Course {
@@ -163,7 +164,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
         <div className="container-custom py-20">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-neutral-800 mb-4">Course Not Found</h1>
-            <p className="text-neutral-600 mb-6">The course you're looking for doesn't exist.</p>
+            <p className="text-neutral-600 mb-6">The course you&apos;re looking for doesn&apos;t exist.</p>
             <Link href="/courses">
               <Button>Back to Courses</Button>
             </Link>
@@ -261,7 +262,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
             {/* What You'll Learn */}
             {course.whatYouWillLearn && course.whatYouWillLearn.length > 0 && (
               <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-neutral-800 mb-4">What You'll Learn</h2>
+                <h2 className="text-xl font-bold text-neutral-800 mb-4">What You&apos;ll Learn</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {course.whatYouWillLearn.map((item, index) => (
                     <div key={index} className="flex items-start space-x-3">
@@ -437,9 +438,11 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
               {/* Course Thumbnail */}
               <div className="relative h-48 bg-gradient-to-br from-primary-50 to-secondary-50 rounded-lg mb-4 overflow-hidden">
                 {course.thumbnail ? (
-                  <img 
+                  <Image 
                     src={course.thumbnail} 
                     alt={course.title}
+                    width={800}
+                    height={192}
                     className="w-full h-full object-cover"
                   />
                 ) : (
