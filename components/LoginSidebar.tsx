@@ -160,8 +160,8 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
 
   // Register new user
   const handleRegister = async () => {
-    if (!newUserData.name || !newUserData.email || !newUserData.password) {
-      setMessage({ type: 'error', text: 'Please fill in all required fields' })
+    if (!newUserData.name || !newUserData.email || !newUserData.password || !newUserData.mobile || newUserData.mobile.length !== 10) {
+      setMessage({ type: 'error', text: 'All fields are required and mobile must be 10 digits' })
       return
     }
 
@@ -352,19 +352,21 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                         />
                       </div>
 
-                      {newUserData.mobile && (
-                        <div>
-                          <label className="block text-sm font-medium text-neutral-700 mb-2">
-                            Mobile Number
-                          </label>
-                          <Input
-                            type="tel"
-                            value={newUserData.mobile}
-                            disabled
-                            className="w-full bg-neutral-50"
-                          />
-                        </div>
-                      )}
+                      <div>
+                        <label className="block text-sm font-medium text-neutral-700 mb-2">
+                          Mobile Number *
+                        </label>
+                        <Input
+                          type="tel"
+                          value={newUserData.mobile}
+                          onChange={(e) =>
+                            setNewUserData(prev => ({ ...prev, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) }))
+                          }
+                          placeholder="Enter 10-digit mobile number"
+                          disabled={isOtpSent}
+                          className={`w-full ${isOtpSent ? 'bg-neutral-50' : ''}`}
+                        />
+                      </div>
 
                       <div>
                         <label className="block text-sm font-medium text-neutral-700 mb-2">

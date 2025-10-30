@@ -11,24 +11,24 @@ import Image from 'next/image';
 interface Course {
   _id: string;
   title: string;
-  hindiTitle: string;
+  hindiTitle?: string;
   description: string;
-  thumbnail: string;
+  thumbnail?: string;
   isPaid: boolean;
   currentPrice?: number;
   originalPrice?: number;
   discount?: number;
-  duration: string;
-  students: string;
-  rating: number;
-  reviews: number;
-  features: string[];
-  badge: string;
-  badgeColor: string;
-  image: string;
-  theme: string;
-  videos: Array<{ title: string; url: string; duration: number }>;
-  pdfs: Array<{ title: string; url: string }>;
+  duration?: string;
+  students?: string;
+  rating?: number;
+  reviews?: number;
+  features?: string[];
+  badge?: string;
+  badgeColor?: string;
+  image?: string;
+  theme?: string;
+  videos?: Array<{ title: string; url: string; duration: number }>;
+  pdfs?: Array<{ title: string; url: string }>;
   createdAt: string;
 }
 
@@ -230,13 +230,20 @@ export default function AdminDashboard() {
             {courses.map((course) => (
               <div key={course._id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                 <div className="aspect-w-16 aspect-h-9">
-                  <Image
-                    src={course.thumbnail}
-                    alt={course.title}
-                    width={800}
-                    height={192}
-                    className="w-full h-48 object-cover"
-                  />
+                  {course.thumbnail ? (
+                    <Image
+                      src={course.thumbnail}
+                      alt={course.title}
+                      width={800}
+                      height={192}
+                      className="w-full h-48 object-cover"
+                      unoptimized={true}
+                    />
+                  ) : (
+                    <div className="w-full h-48 bg-gray-200 flex items-center justify-center">
+                      <BookOpen className="h-12 w-12 text-gray-400" />
+                    </div>
+                  )}
                 </div>
                 
                 <div className="p-6">
@@ -244,14 +251,18 @@ export default function AdminDashboard() {
                     <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
                       {course.title}
                     </h3>
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${course.badgeColor} text-white`}>
-                      {course.badge}
-                    </span>
+                    {course.badge && course.badgeColor && (
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${course.badgeColor} text-white`}>
+                        {course.badge}
+                      </span>
+                    )}
                   </div>
                   
-                  <p className="mt-1 text-sm text-primary-600 font-medium">
-                    {course.hindiTitle}
-                  </p>
+                  {course.hindiTitle && (
+                    <p className="mt-1 text-sm text-primary-600 font-medium">
+                      {course.hindiTitle}
+                    </p>
+                  )}
                   
                   <p className="mt-2 text-sm text-gray-600 line-clamp-3">
                     {course.description}
@@ -260,11 +271,11 @@ export default function AdminDashboard() {
                   <div className="mt-4 flex items-center space-x-4 text-sm text-gray-500">
                     <div className="flex items-center">
                       <Video className="h-4 w-4 mr-1" />
-                      {course.videos.length} videos
+                      {course.videos?.length || 0} videos
                     </div>
                     <div className="flex items-center">
                       <FileText className="h-4 w-4 mr-1" />
-                      {course.pdfs.length} PDFs
+                      {course.pdfs?.length || 0} PDFs
                     </div>
                   </div>
                   

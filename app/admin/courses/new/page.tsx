@@ -385,6 +385,7 @@ export default function NewCourse() {
                     width={800}
                     height={192}
                     className="w-full h-48 object-cover rounded-lg"
+                    unoptimized={true}
                   />
                   <button
                     type="button"

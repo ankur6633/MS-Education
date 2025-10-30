@@ -119,6 +119,7 @@ export function SkillWallet() {
                     width={800}
                     height={144}
                     className="w-full h-full object-cover"
+                    unoptimized={true}
                   />
                 ) : (
                   <div className="text-4xl">{course.image || '📚'}</div>

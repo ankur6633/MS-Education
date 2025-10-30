@@ -296,6 +296,7 @@ export default function CoursesPage() {
                           width={800}
                           height={192}
                           className="w-full h-full object-cover"
+                          unoptimized={true}
                         />
                       ) : (
                         <div className="text-4xl">{course.image || '📚'}</div>

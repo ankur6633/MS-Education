@@ -50,10 +50,37 @@ export const authOptions: NextAuthOptions = {
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      try {
+        // Allow relative callback URLs
+        if (url.startsWith('/')) return `${baseUrl}${url}`;
+        const to = new URL(url);
+        const base = new URL(baseUrl);
+        // Allow same-origin URLs
+        if (to.origin === base.origin) return url;
+      } catch {}
+      // Fallback to base URL to avoid malformed concatenation
+      return baseUrl;
+    }
   },
   pages: {
     signIn: '/admin/login',
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === 'development',
+  // Fix callback URL issues in development
+  useSecureCookies: process.env.NODE_ENV === 'production',
+  cookies: {
+    sessionToken: {
+      name: process.env.NODE_ENV === 'production' 
+        ? `__Secure-next-auth.session-token` 
+        : `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
+  },
 };
