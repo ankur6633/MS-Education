@@ -30,24 +30,24 @@ type CourseForm = z.infer<typeof courseSchema>;
 interface Course {
   _id: string;
   title: string;
-  hindiTitle: string;
+  hindiTitle?: string;
   description: string;
-  thumbnail: string;
+  thumbnail?: string;
   isPaid: boolean;
   currentPrice?: number;
   originalPrice?: number;
   discount?: number;
-  duration: string;
-  students: string;
-  rating: number;
-  reviews: number;
-  features: string[];
-  badge: string;
-  badgeColor: string;
-  image: string;
-  theme: string;
-  videos: Array<{ title: string; url: string; duration: number }>;
-  pdfs: Array<{ title: string; url: string }>;
+  duration?: string;
+  students?: string;
+  rating?: number;
+  reviews?: number;
+  features?: string[];
+  badge?: string;
+  badgeColor?: string;
+  image?: string;
+  theme?: string;
+  videos?: Array<{ title: string; url: string; duration: number }>;
+  pdfs?: Array<{ title: string; url: string }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -138,7 +138,9 @@ export default function EditCourse({ params }: { params: { id: string } }) {
         throw new Error('Failed to fetch course');
       }
 
-      const courseData = await response.json();
+      const data = await response.json();
+      // Handle both response formats: { course } or direct course object
+      const courseData = data.course || data;
       setCourse(courseData);
       setThumbnailPreview(courseData.thumbnail);
       
@@ -265,7 +267,8 @@ export default function EditCourse({ params }: { params: { id: string } }) {
       toast.success('Course updated successfully');
       
       // Update local state with the updated course data
-      const updatedCourseData = await response.json();
+      const updateResponse = await response.json();
+      const updatedCourseData = updateResponse.course || updateResponse;
       setCourse(updatedCourseData);
       
       // Reset the form with updated data to maintain consistency
@@ -522,6 +525,7 @@ export default function EditCourse({ params }: { params: { id: string } }) {
                     width={800}
                     height={192}
                     className="w-full h-48 object-cover rounded-lg"
+                    unoptimized={true}
                   />
                   <button
                     type="button"

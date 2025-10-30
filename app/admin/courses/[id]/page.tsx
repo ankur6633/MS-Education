@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Edit, Trash2, Plus, Video, FileText, Clock, Eye, LogOut , X} from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Plus, Video, FileText, Clock, Eye, LogOut, X, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
@@ -14,10 +14,10 @@ interface Course {
   _id: string;
   title: string;
   description: string;
-  thumbnail: string;
+  thumbnail?: string;
   isPaid: boolean;
-  videos: Array<{ title: string; url: string; duration: number; order: number }>;
-  pdfs: Array<{ title: string; url: string; order: number }>;
+  videos?: Array<{ title: string; url: string; duration: number; order: number }>;
+  pdfs?: Array<{ title: string; url: string; order: number }>;
   createdAt: string;
   updatedAt: string;
 }
@@ -50,7 +50,9 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
         throw new Error('Failed to fetch course');
       }
 
-      const courseData = await response.json();
+      const data = await response.json();
+      // Handle both response formats: { course } or direct course object
+      const courseData = data.course || data;
       setCourse(courseData);
     } catch (error) {
       console.error('Error fetching course:', error);
@@ -210,13 +212,25 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
         {/* Course Overview */}
         <div className="bg-white shadow-sm rounded-lg p-6 mb-8">
           <div className="flex items-start space-x-6">
-            <Image
-              src={course.thumbnail}
-              alt={course.title}
-              width={128}
-              height={96}
-              className="w-32 h-24 object-cover rounded-lg"
-            />
+            {course.thumbnail ? (
+              <Image
+                src={course.thumbnail}
+                alt={course.title}
+                width={128}
+                height={96}
+                className="w-32 h-24 object-cover rounded-lg"
+                unoptimized={true}
+                onError={(e) => {
+                  // Fallback to placeholder if image fails to load
+                  e.currentTarget.src = '';
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            ) : (
+              <div className="w-32 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                <BookOpen className="h-8 w-8 text-gray-400" />
+              </div>
+            )}
             <div className="flex-1">
               <div className="flex items-center space-x-4 mb-2">
                 <h2 className="text-xl font-semibold text-gray-900">{course.title}</h2>
@@ -232,15 +246,15 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
               <div className="flex items-center space-x-6 text-sm text-gray-500">
                 <div className="flex items-center">
                   <Video className="h-4 w-4 mr-1" />
-                  {course.videos.length} videos
+                  {course.videos?.length || 0} videos
                 </div>
                 <div className="flex items-center">
                   <FileText className="h-4 w-4 mr-1" />
-                  {course.pdfs.length} PDFs
+                  {course.pdfs?.length || 0} PDFs
                 </div>
                 <div className="flex items-center">
                   <Clock className="h-4 w-4 mr-1" />
-                  {course.videos.reduce((total, video) => total + video.duration, 0)} min total
+                  {course.videos?.reduce((total, video) => total + video.duration, 0) || 0} min total
                 </div>
               </div>
             </div>
@@ -260,7 +274,7 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
                 }`}
               >
                 <Video className="h-4 w-4 inline mr-2" />
-                Videos ({course.videos.length})
+                Videos ({course.videos?.length || 0})
               </button>
               <button
                 onClick={() => setActiveTab('pdfs')}
@@ -271,7 +285,7 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
                 }`}
               >
                 <FileText className="h-4 w-4 inline mr-2" />
-                PDFs ({course.pdfs.length})
+                PDFs ({course.pdfs?.length || 0})
               </button>
             </nav>
           </div>
@@ -284,7 +298,7 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
                   <VideoUploader courseId={course._id} onUpload={fetchCourse} />
                 </div>
 
-                {course.videos.length === 0 ? (
+                {(!course.videos || course.videos.length === 0) ? (
                   <div className="text-center py-12">
                     <Video className="mx-auto h-12 w-12 text-gray-400" />
                     <h3 className="mt-2 text-sm font-medium text-gray-900">No videos</h3>
@@ -341,7 +355,7 @@ export default function CourseDetail({ params }: { params: { id: string } }) {
                   <PDFUploader courseId={course._id} onUpload={fetchCourse} />
                 </div>
 
-                {course.pdfs.length === 0 ? (
+                {(!course.pdfs || course.pdfs.length === 0) ? (
                   <div className="text-center py-12">
                     <FileText className="mx-auto h-12 w-12 text-gray-400" />
                     <h3 className="mt-2 text-sm font-medium text-gray-900">No PDFs</h3>

@@ -80,6 +80,7 @@ export function Navbar() {
   }
 
   return (
+    <>
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -106,7 +107,7 @@ export function Navbar() {
             </Link>
             
             {/* Desktop Search Bar - Only visible on large screens */}
-            <form onSubmit={handleSearch} className="hidden lg:block">
+            <form onSubmit={handleSearch} className="hidden md:flex">
               <div className="relative">
                 <input
                   type="text"
@@ -125,8 +126,8 @@ export function Navbar() {
             </form>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
+          {/* Desktop Navigation (visible from md and up) */}
+          <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <button
                 key={item.name}
@@ -139,7 +140,7 @@ export function Navbar() {
           </div>
 
           {/* CTA Button or User Menu */}
-          <div className="hidden lg:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <div className="relative" data-user-menu>
                 <button
@@ -236,10 +237,10 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button (hidden from md and up) */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors"
             data-mobile-menu
           >
             {isMobileMenuOpen ? (
@@ -251,14 +252,14 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu (hidden from md and up) */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white border-t border-neutral-200 shadow-lg"
+            className="md:hidden bg-white border-t border-neutral-200 shadow-lg"
             data-mobile-menu
           >
             <div className="container-custom py-4 space-y-4">
@@ -366,5 +367,14 @@ export function Navbar() {
         onClose={() => setIsLoginSidebarOpen(false)} 
       />
     </motion.nav>
+    {/* Persistent Get Started Floating Button */}
+    <button
+      onClick={() => setIsLoginSidebarOpen(true)}
+      className="fixed bottom-6 right-6 z-[60] shadow-lg rounded-full px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium transition-colors"
+      aria-label="Get Started"
+    >
+      Get Started
+    </button>
+    </>
   )
 }

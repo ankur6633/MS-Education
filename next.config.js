@@ -7,13 +7,19 @@ const nextConfig = {
         hostname: 'res.cloudinary.com',
       },
     ],
+    // Disable image optimization to avoid issues with external URLs
+    unoptimized: true,
   },
   experimental: {
     serverComponentsExternalPackages: ['mongoose'],
   },
-  // Vercel optimizations
+  // Production optimizations
   swcMinify: true,
   compress: true,
+  // Optimize production builds
+  productionBrowserSourceMaps: false,
+  // Reduce bundle size
+  poweredByHeader: false,
 }
 
 module.exports = nextConfig
