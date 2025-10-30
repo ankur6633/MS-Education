@@ -43,11 +43,13 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.sub || '';
-        session.user.role = token.role;
-        session.user.username = token.username;
-      }
+      if (!token) return session;
+      // Ensure session.user exists before assigning custom fields
+      const user = (session.user || {}) as any;
+      user.id = token.sub || '';
+      if (token.role) user.role = token.role;
+      if (token.username) user.username = token.username;
+      (session as any).user = user;
       return session;
     },
     async redirect({ url, baseUrl }) {
