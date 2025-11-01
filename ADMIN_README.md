@@ -87,7 +87,7 @@ Create a `.env.local` file in the root directory:
 
 ```env
 # Database
-MONGODB_URI=mongodb://localhost:27017/mseducation
+MONGODB_URI=mongodb+srv://msenglish:ankur@msenglish.ugt6lgz.mongodb.net/mseducation
 
 # NextAuth
 NEXTAUTH_URL=http://localhost:3000

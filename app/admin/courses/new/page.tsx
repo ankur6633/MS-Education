@@ -34,6 +34,7 @@ export default function NewCourse() {
   const [thumbnailPreview, setThumbnailPreview] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const [features, setFeatures] = useState<string[]>(['']);
+  const [showInCarousel, setShowInCarousel] = useState(false);
 
   const {
     register,
@@ -164,6 +165,7 @@ export default function NewCourse() {
         image: '📚',
         theme: 'default',
         thumbnail: uploadResult.url,
+        showInCarousel,
       };
       
       console.log('Creating course with data:', courseData);
@@ -503,6 +505,27 @@ export default function NewCourse() {
                 + Add Feature
               </button>
             </div>
+          </div>
+
+          {/* Carousel Settings */}
+          <div className="bg-white shadow-sm rounded-lg p-6">
+            <h2 className="text-lg font-medium text-gray-900 mb-6">Carousel Settings</h2>
+            
+            <div className="flex items-center">
+              <input
+                id="showInCarousel"
+                type="checkbox"
+                checked={showInCarousel}
+                onChange={(e) => setShowInCarousel(e.target.checked)}
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              />
+              <label htmlFor="showInCarousel" className="ml-2 block text-sm text-gray-700">
+                Show this course in homepage carousel
+              </label>
+            </div>
+            <p className="mt-2 text-sm text-gray-500">
+              Enable this to display the course in the promotional carousel on the homepage.
+            </p>
           </div>
 
 

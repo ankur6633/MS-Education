@@ -81,7 +81,8 @@ export async function POST(request: NextRequest) {
       badge, 
       badgeColor, 
       image, 
-      theme 
+      theme,
+      showInCarousel
     } = body;
 
     if (!title || !hindiTitle || !description || !thumbnail || !duration || !students || !rating || !reviews || !features) {
@@ -115,6 +116,7 @@ export async function POST(request: NextRequest) {
       badgeColor: badgeColor || 'bg-blue-500',
       image: image || '📚',
       theme: theme || 'default',
+      showInCarousel: showInCarousel || false,
       videos: [],
       pdfs: []
     });

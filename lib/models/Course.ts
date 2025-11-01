@@ -31,6 +31,7 @@ export interface ICourse extends Document {
   badgeColor: string;
   image: string;
   theme: string;
+  showInCarousel: boolean;
   videos: IVideo[];
   pdfs: IPDF[];
   createdAt: Date;
@@ -134,6 +135,10 @@ const CourseSchema = new Schema<ICourse>({
     type: String,
     required: true,
     trim: true
+  },
+  showInCarousel: {
+    type: Boolean,
+    default: false
   },
   videos: [VideoSchema],
   pdfs: [PDFSchema],
