@@ -1,6 +1,21 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
+if (process.env.NODE_ENV !== 'production') {
+  const origin = 'http://localhost:3000';
+  process.env.NEXTAUTH_URL = origin;
+  process.env.NEXTAUTH_URL_INTERNAL = origin;
+  process.env.AUTH_TRUST_HOST = 'true';
+
+  if (!process.env.NEXTAUTH_SECRET) {
+    process.env.NEXTAUTH_SECRET = 'dev-secret-change-me';
+  }
+
+  if (process.env.NEXTAUTH_DEBUG ?? process.env.NODE_ENV === 'development') {
+    console.info('[auth] Using NEXTAUTH_URL:', process.env.NEXTAUTH_URL);
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -69,6 +84,8 @@ export const authOptions: NextAuthOptions = {
     signIn: '/admin/login',
   },
   secret: process.env.NEXTAUTH_SECRET,
+  // @ts-expect-error Option exists at runtime but is missing from the current type definitions
+  trustHost: process.env.NODE_ENV !== 'production',
   debug: process.env.NODE_ENV === 'development',
   // Fix callback URL issues in development
   useSecureCookies: process.env.NODE_ENV === 'production',

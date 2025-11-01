@@ -1,8 +1,34 @@
 import { withAuth } from 'next-auth/middleware';
+import { NextResponse } from 'next/server';
 
 export default withAuth(
   function middleware(req) {
-    // Add any additional middleware logic here if needed
+    const res = NextResponse.next();
+
+    const callbackCookie = req.cookies.get('next-auth.callback-url');
+    if (callbackCookie?.value) {
+      let normalized = callbackCookie.value;
+      try {
+        const parsed = new URL(callbackCookie.value);
+        normalized = parsed.origin + parsed.pathname;
+      } catch {
+        normalized = 'http://localhost:3000';
+      }
+
+      if (!normalized.startsWith('http://localhost:3000')) {
+        normalized = 'http://localhost:3000';
+      }
+
+      if (normalized !== callbackCookie.value) {
+        res.cookies.set('next-auth.callback-url', normalized, {
+          path: '/',
+          httpOnly: true,
+          sameSite: 'lax',
+        });
+      }
+    }
+
+    return res;
   },
   {
     callbacks: {
@@ -24,5 +50,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ['/admin/:path*']
+  matcher: ['/admin/:path*', '/api/auth/:path*']
 };
