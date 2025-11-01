@@ -14,40 +14,12 @@ const faqs = [
     answer: 'MS Education combines expert faculty, comprehensive study material, AI-powered study guidance, and guaranteed placement assistance — all in one platform with proven results.'
   },
   {
-    question: 'What is the success rate of MS Education?',
-    answer: 'MS Education has a 95% success rate with over 50,000+ successful students placed in top companies and government jobs across India.'
-  },
-  {
-    question: 'How does the AI Study Mentor help students?',
-    answer: 'The AI Study Mentor provides personalized study plans, performance analytics, mock test preparation, and 24/7 academic support to help students achieve their goals.'
-  },
-  {
     question: 'Are there any free trial classes available?',
     answer: 'Yes. We offer free demo classes, career counseling sessions, and sample study material to help you make an informed decision.'
   },
   {
-    question: 'What is the fee structure for different courses?',
-    answer: 'Course fees vary by program. CA Foundation starts at ₹15,999, GATE preparation at ₹12,999, UPSC at ₹24,999, and MBA at ₹18,999 with flexible payment options.'
-  },
-  {
-    question: 'Is the study material provided comprehensive?',
-    answer: 'Yes. We provide complete study material including books, video lectures, practice tests, previous year papers, and mock tests for all courses.'
-  },
-  {
-    question: 'Do you provide placement assistance?',
-    answer: 'Yes. We have a dedicated placement cell with partnerships with 500+ companies and government organizations to ensure 100% placement assistance.'
-  },
-  {
     question: 'Can I access classes online?',
     answer: 'Yes. We offer both online and offline classes with live interactive sessions, recorded lectures, and mobile app access for flexible learning.'
-  },
-  {
-    question: 'What support is available for doubt clearing?',
-    answer: 'We provide 24/7 doubt clearing support through our AI mentor, dedicated faculty, and student community forums.'
-  },
-  {
-    question: 'Are there any scholarship programs available?',
-    answer: 'Yes. We offer merit-based scholarships, early bird discounts, and special programs for economically weaker students.'
   },
   {
     question: 'How do I enroll in a course?',

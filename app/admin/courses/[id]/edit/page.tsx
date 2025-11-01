@@ -10,7 +10,6 @@ import toast from 'react-hot-toast';
 import { ArrowLeft, Upload, X, LogOut, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-// Removed direct Cloudinary import - using API route instead
 
 const courseSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),

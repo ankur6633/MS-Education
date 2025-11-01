@@ -1,7 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Linkedin, Twitter, Youtube, ArrowRight } from 'lucide-react'
+import { Mail, Linkedin, Twitter, Youtube, ArrowRight, CheckCircle, XCircle, Loader2 } from 'lucide-react'
+import toast, { Toaster } from 'react-hot-toast'
 
 const footerLinks = {
   courses: [
@@ -41,6 +43,10 @@ const socialLinks = [
 ]
 
 export function Footer() {
+  const [email, setEmail] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [subscriptionStatus, setSubscriptionStatus] = useState<'idle' | 'success' | 'error'>('idle')
+
   const scrollToSection = (href: string) => {
     if (href.startsWith('#')) {
       const element = document.querySelector(href)
@@ -50,8 +56,77 @@ export function Footer() {
     }
   }
 
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Basic client-side validation
+    if (!email || email.trim().length === 0) {
+      toast.error('Please enter your email address')
+      return
+    }
+
+    if (email.length < 5) {
+      toast.error('Email must be at least 5 characters long')
+      return
+    }
+
+    if (email.length > 254) {
+      toast.error('Email cannot exceed 254 characters')
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      toast.error('Please enter a valid email address')
+      return
+    }
+
+    setIsSubmitting(true)
+    setSubscriptionStatus('idle')
+
+    try {
+      const response = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          email: email.trim().toLowerCase(),
+          source: 'footer-newsletter'
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setSubscriptionStatus('success')
+        toast.success(data.message || 'Successfully subscribed! Check your email.', {
+          duration: 5000,
+          icon: '🎉'
+        })
+        setEmail('') // Clear the input
+      } else {
+        setSubscriptionStatus('error')
+        toast.error(data.message || 'Failed to subscribe. Please try again.', {
+          duration: 4000
+        })
+      }
+    } catch (error) {
+      console.error('Subscription error:', error)
+      setSubscriptionStatus('error')
+      toast.error('Network error. Please check your connection and try again.', {
+        duration: 4000
+      })
+    } finally {
+      setIsSubmitting(false)
+      // Reset status after 3 seconds
+      setTimeout(() => setSubscriptionStatus('idle'), 3000)
+    }
+  }
+
   return (
     <footer className="bg-neutral-900 text-white">
+      <Toaster position="bottom-center" />
       <div className="container-custom">
         {/* Main Footer Content */}
         <div className="py-16">
@@ -207,17 +282,52 @@ export function Footer() {
                 Get the latest updates on new courses, exam notifications, and success stories.
               </p>
             </div>
-            <div className="flex w-full md:w-auto">
+            <form onSubmit={handleSubscribe} className="flex w-full md:w-auto">
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 md:w-80 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-l-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
+                maxLength={254}
+                className="flex-1 md:w-80 px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-l-lg text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               />
-              <button className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white px-6 py-3 rounded-r-lg transition-all duration-200 flex items-center space-x-2">
-                <span>Subscribe</span>
-                <ArrowRight className="h-4 w-4" />
+              <button 
+                type="submit"
+                disabled={isSubmitting}
+                className={`
+                  px-6 py-3 rounded-r-lg transition-all duration-200 flex items-center space-x-2 text-white
+                  ${subscriptionStatus === 'success' 
+                    ? 'bg-green-500 hover:bg-green-600' 
+                    : subscriptionStatus === 'error'
+                    ? 'bg-red-500 hover:bg-red-600'
+                    : 'bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700'}
+                  disabled:opacity-50 disabled:cursor-not-allowed
+                `}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Subscribing...</span>
+                  </>
+                ) : subscriptionStatus === 'success' ? (
+                  <>
+                    <CheckCircle className="h-4 w-4" />
+                    <span>Subscribed!</span>
+                  </>
+                ) : subscriptionStatus === 'error' ? (
+                  <>
+                    <XCircle className="h-4 w-4" />
+                    <span>Try Again</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Subscribe</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
               </button>
-            </div>
+            </form>
           </div>
         </motion.div>
 
