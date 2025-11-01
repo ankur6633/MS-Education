@@ -47,8 +47,19 @@ export async function POST(request: NextRequest) {
                      request.headers.get('x-real-ip') || 
                      'unknown';
 
-    // Connect to database
-    await dbConnect();
+    // Connect to database - handle connection errors
+    try {
+      await dbConnect();
+    } catch (dbError) {
+      console.error('Database connection failed:', dbError);
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: 'Database connection failed. Please try again later.' 
+        },
+        { status: 503 }
+      );
+    }
 
     // Check if email already exists
     const existingSubscriber = await Subscriber.findOne({ email });
@@ -149,7 +160,19 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    await dbConnect();
+    // Connect to database - handle connection errors
+    try {
+      await dbConnect();
+    } catch (dbError) {
+      console.error('Database connection failed:', dbError);
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: 'Database connection failed. Please try again later.' 
+        },
+        { status: 503 }
+      );
+    }
 
     const subscriber = await Subscriber.findOne({ email: email.toLowerCase() });
 

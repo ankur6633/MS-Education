@@ -45,8 +45,7 @@ const SubscriberSchema = new Schema<ISubscriber>(
   }
 );
 
-// Index for faster queries
-SubscriberSchema.index({ email: 1 });
+// Index for faster queries (email index is created by unique: true above)
 SubscriberSchema.index({ subscribedAt: -1 });
 
 // Virtual for days since subscription

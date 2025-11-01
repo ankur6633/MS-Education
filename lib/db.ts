@@ -2,10 +2,6 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-}
-
 /**
  * Global is used here to maintain a cached connection across hot reloads
  * in development. This prevents connections growing exponentially
@@ -22,6 +18,20 @@ if (!cached) {
 }
 
 async function dbConnect() {
+  // Check if MongoDB URI is configured and valid
+  if (!MONGODB_URI || MONGODB_URI === 'your_mongodb_connection_string') {
+    const error = new Error('MongoDB URI is not configured. Please set MONGODB_URI in your environment variables.');
+    console.warn('⚠️ MongoDB not configured:', error.message);
+    throw error;
+  }
+
+  // Validate URI format
+  if (!MONGODB_URI.startsWith('mongodb://') && !MONGODB_URI.startsWith('mongodb+srv://')) {
+    const error = new Error('Invalid MongoDB URI format. Must start with mongodb:// or mongodb+srv://');
+    console.error('❌ Invalid MongoDB URI:', error.message);
+    throw error;
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
@@ -36,10 +46,11 @@ async function dbConnect() {
       retryWrites: true,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       console.log('✅ Connected to MongoDB Atlas');
       return mongoose;
     }).catch((error) => {
+      cached.promise = null; // Clear promise on error so it can retry
       console.error('❌ MongoDB connection error:', error.message);
       throw error;
     });
