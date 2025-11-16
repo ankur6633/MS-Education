@@ -1,10 +1,8 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/mseducation';
-
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-}
+const ENV_URI = process.env.MONGODB_URI;
+// Provide a sane local fallback for development if env is missing
+const FALLBACK_LOCAL_URI = 'mongodb://127.0.0.1:27017/ms-education';
 
 /**
  * Global is used here to maintain a cached connection across hot reloads
@@ -21,7 +19,26 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
+function resolveMongoUri(): string {
+  // Prefer configured env
+  if (ENV_URI && ENV_URI !== 'your_mongodb_connection_string') {
+    return ENV_URI;
+  }
+  // Fall back to local for development
+  console.warn('⚠️ MONGODB_URI not configured. Falling back to local MongoDB at', FALLBACK_LOCAL_URI);
+  return FALLBACK_LOCAL_URI;
+}
+
 async function dbConnect() {
+  const MONGODB_URI = resolveMongoUri();
+
+  // Validate URI format
+  if (!MONGODB_URI.startsWith('mongodb://') && !MONGODB_URI.startsWith('mongodb+srv://')) {
+    const error = new Error('Invalid MongoDB URI format. Must start with mongodb:// or mongodb+srv://');
+    console.error('❌ Invalid MongoDB URI:', error.message);
+    throw error;
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
@@ -29,17 +46,18 @@ async function dbConnect() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      serverSelectionTimeoutMS: 10000, // 10 seconds
-      socketTimeoutMS: 45000, // 45 seconds
-      connectTimeoutMS: 10000, // 10 seconds
-      maxPoolSize: 10, // Maintain up to 10 socket connections
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 10000,
+      maxPoolSize: 10,
       retryWrites: true,
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      console.log('✅ Connected to MongoDB Atlas');
+      console.log('✅ Connected to MongoDB:', mongoose.connection.host);
       return mongoose;
     }).catch((error) => {
+      cached.promise = null;
       console.error('❌ MongoDB connection error:', error.message);
       throw error;
     });

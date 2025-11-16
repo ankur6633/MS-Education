@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 import { Eye, EyeOff, Lock, User } from 'lucide-react';
 
 const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
+  email: z.string().email('Please enter a valid email').min(1, 'Email is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -34,7 +34,7 @@ export default function AdminLogin() {
     
     try {
       const result = await signIn('credentials', {
-        username: data.username,
+        email: data.email,
         password: data.password,
         redirect: false,
       });
@@ -67,22 +67,23 @@ export default function AdminLogin() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Username
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email Address
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <User className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
-                  {...register('username')}
-                  type="text"
+                  {...register('email')}
+                  type="email"
+                  autoComplete="email"
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
-                  placeholder="Enter your username"
+                  placeholder="admin@mseducation.com"
                 />
               </div>
-              {errors.username && (
-                <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
               )}
             </div>
 
@@ -97,6 +98,7 @@ export default function AdminLogin() {
                 <input
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
                   className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                   placeholder="Enter your password"
                 />

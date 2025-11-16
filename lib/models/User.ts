@@ -5,6 +5,14 @@ export interface IUser extends Document {
   email: string;
   mobile: string;
   password: string;
+  enrolledCourses: mongoose.Types.ObjectId[]; // Array of course IDs
+  // Profile fields
+  profileImage?: string;
+  address?: string;
+  interestField?: string;
+  interests?: string[];
+  bio?: string;
+  skills?: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,6 +43,47 @@ const UserSchema = new Schema<IUser>({
     type: String, 
     required: true,
     minlength: 6
+  },
+  enrolledCourses: {
+    type: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Course'
+    }],
+    default: []
+  },
+  // Optional profile fields
+  profileImage: {
+    type: String,
+    required: false,
+    trim: true,
+  },
+  address: {
+    type: String,
+    required: false,
+    trim: true,
+    maxlength: 300
+  },
+  interestField: {
+    type: String,
+    required: false,
+    trim: true,
+    maxlength: 100
+  },
+  interests: {
+    type: [String],
+    required: false,
+    default: []
+  },
+  bio: {
+    type: String,
+    required: false,
+    trim: true,
+    maxlength: 500
+  },
+  skills: {
+    type: [String],
+    required: false,
+    default: []
   },
   createdAt: { 
     type: Date, 

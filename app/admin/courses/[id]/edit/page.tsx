@@ -10,7 +10,6 @@ import toast from 'react-hot-toast';
 import { ArrowLeft, Upload, X, LogOut, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-// Removed direct Cloudinary import - using API route instead
 
 const courseSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
@@ -63,6 +62,7 @@ export default function EditCourse({ params }: { params: { id: string } }) {
   const [features, setFeatures] = useState<string[]>(['']);
   const [hasInitialized, setHasInitialized] = useState(false);
   const [formHasChanges, setFormHasChanges] = useState(false);
+  const [showInCarousel, setShowInCarousel] = useState(false);
 
   const {
     register,
@@ -143,6 +143,7 @@ export default function EditCourse({ params }: { params: { id: string } }) {
       const courseData = data.course || data;
       setCourse(courseData);
       setThumbnailPreview(courseData.thumbnail);
+      setShowInCarousel(courseData.showInCarousel || false);
       
       // Set features from course data
       if (courseData.features && courseData.features.length > 0) {
@@ -257,6 +258,7 @@ export default function EditCourse({ params }: { params: { id: string } }) {
           image: course?.image || '📚',
           theme: course?.theme || 'default',
           thumbnail: thumbnailUrl,
+          showInCarousel,
         }),
       });
 
@@ -682,6 +684,30 @@ export default function EditCourse({ params }: { params: { id: string } }) {
                 + Add Feature
               </button>
             </div>
+          </div>
+
+          {/* Carousel Settings */}
+          <div className="bg-white shadow-sm rounded-lg p-6">
+            <h2 className="text-lg font-medium text-gray-900 mb-6">Carousel Settings</h2>
+            
+            <div className="flex items-center">
+              <input
+                id="showInCarousel"
+                type="checkbox"
+                checked={showInCarousel}
+                onChange={(e) => {
+                  setShowInCarousel(e.target.checked);
+                  setFormHasChanges(true);
+                }}
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              />
+              <label htmlFor="showInCarousel" className="ml-2 block text-sm text-gray-700">
+                Show this course in homepage carousel
+              </label>
+            </div>
+            <p className="mt-2 text-sm text-gray-500">
+              Enable this to display the course in the promotional carousel on the homepage.
+            </p>
           </div>
 
           {/* Actions */}

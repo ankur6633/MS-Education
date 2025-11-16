@@ -17,6 +17,7 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isLoginSidebarOpen, setIsLoginSidebarOpen] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const { user, logout } = useUser()
 
@@ -67,8 +68,21 @@ export function Navbar() {
   }
 
   const handleLogout = () => {
+    setShowLogoutModal(true)
+  }
+
+  const confirmLogout = () => {
     logout()
     setShowUserMenu(false)
+    setShowLogoutModal(false)
+    // Redirect to home after logout
+    if (typeof window !== 'undefined') {
+      window.location.href = '/'
+    }
+  }
+
+  const cancelLogout = () => {
+    setShowLogoutModal(false)
   }
 
   const handleSearch = (e: React.FormEvent) => {
@@ -151,7 +165,7 @@ export function Navbar() {
                     <User className="h-4 w-4 text-white" />
                   </div>
                   <span className="text-sm font-medium text-neutral-700">
-                    {user.name}
+                    {user.name || 'Account'}
                   </span>
                 </button>
 
@@ -164,22 +178,22 @@ export function Navbar() {
                       exit={{ opacity: 0, y: -10 }}
                       className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-lg border border-neutral-200 py-2 z-50"
                     >
-                      {/* User Info */}
-                      <div className="px-4 py-3 border-b border-neutral-100">
-                        <p className="text-sm font-medium text-neutral-800">{user.name}</p>
-                        <p className="text-xs text-neutral-500">{user.email}</p>
-                      </div>
+                      {/* User Info hidden per privacy request */}
                       
                       {/* Menu Items */}
                       <div className="py-2">
-                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                        <Link
+                          href="/profile"
+                          onClick={() => setShowUserMenu(false)}
+                          className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        >
                           <User className="h-4 w-4" />
                           <span>Profile</span>
-                        </button>
-                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                        </Link>
+                        <Link href="/my-purchases" className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                           <ShoppingBag className="h-4 w-4" />
                           <span>My Purchases</span>
-                        </button>
+                        </Link>
                         <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                           <Settings className="h-4 w-4" />
                           <span>Settings</span>
@@ -199,20 +213,7 @@ export function Navbar() {
                       </div>
                       
                       {/* Separator */}
-                      <div className="border-t border-neutral-100 my-2"></div>
-                      
-                      {/* Premium Section */}
-                      <div className="px-4 py-3">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <span className="text-sm font-medium text-neutral-800">Get</span>
-                          <span className="text-sm font-medium text-blue-600">MS Education</span>
-                          <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded">PLUS</span>
-                        </div>
-                        <p className="text-xs text-neutral-500">Access 10,000+ courses</p>
-                      </div>
-                      
-                      {/* Separator */}
-                      <div className="border-t border-neutral-100 my-2"></div>
+                      <div className="border-t border-neutral-100 my-1"></div>
                       
                       {/* Logout */}
                       <button
@@ -293,22 +294,22 @@ export function Navbar() {
               ))}
               {user ? (
                 <div className="space-y-3">
-                  {/* User Info */}
-                  <div className="px-3 py-2 bg-neutral-50 rounded-lg">
-                    <p className="text-sm font-medium text-neutral-800">{user.name}</p>
-                    <p className="text-xs text-neutral-500">{user.email}</p>
-                  </div>
+                  {/* User Info hidden per privacy request */}
                   
                   {/* Menu Items */}
                   <div className="space-y-1">
-                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                    <Link
+                      href="/profile"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                    >
                       <User className="h-4 w-4" />
                       <span>Profile</span>
-                    </button>
-                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                    </Link>
+                    <Link href="/my-purchases" className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
                       <ShoppingBag className="h-4 w-4" />
                       <span>My Purchases</span>
-                    </button>
+                    </Link>
                     <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
                       <Settings className="h-4 w-4" />
                       <span>Settings</span>
@@ -327,15 +328,7 @@ export function Navbar() {
                     </button>
                   </div>
                   
-                  {/* Premium Section */}
-                  <div className="px-3 py-2 bg-blue-50 rounded-lg">
-                    <div className="flex items-center space-x-2 mb-1">
-                      <span className="text-sm font-medium text-neutral-800">Get</span>
-                      <span className="text-sm font-medium text-blue-600">MS Education</span>
-                      <span className="bg-blue-600 text-white text-xs px-2 py-0.5 rounded">PLUS</span>
-                    </div>
-                    <p className="text-xs text-neutral-500">Access 10,000+ courses</p>
-                  </div>
+                  {/* Premium Section removed */}
                   
                   {/* Logout */}
                   <Button
@@ -367,6 +360,40 @@ export function Navbar() {
         onClose={() => setIsLoginSidebarOpen(false)} 
       />
     </motion.nav>
+    {/* Logout Confirmation Modal */}
+    {showLogoutModal && (
+      <div
+        className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="logout-title"
+      >
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4">
+          <div className="px-6 py-5">
+            <h3 id="logout-title" className="text-lg font-semibold text-neutral-900">
+              Are you sure you want to log out?
+            </h3>
+            <p className="mt-2 text-sm text-neutral-600">
+              You will be signed out of your current session.
+            </p>
+            <div className="mt-5 flex items-center justify-end gap-3">
+              <button
+                onClick={cancelLogout}
+                className="px-4 py-2 text-sm rounded-md border border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLogout}
+                className="px-4 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700"
+              >
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
     {/* Persistent Get Started Floating Button */}
     <button
       onClick={() => setIsLoginSidebarOpen(true)}

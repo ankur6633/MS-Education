@@ -1,53 +1,36 @@
-import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-export default withAuth(
-  function middleware(req) {
-    // Normalize NextAuth callbackUrl to a single origin to avoid mixed hosts in dev
-    const url = req.nextUrl
-    if (url.pathname.startsWith('/api/auth')) {
-      const callbackUrl = url.searchParams.get('callbackUrl')
-      if (callbackUrl) {
-        try {
-          const isDev = process.env.NODE_ENV !== 'production'
-          const desiredOrigin = isDev ? 'http://localhost:3000' : url.origin
-          const parsed = new URL(callbackUrl, desiredOrigin)
-          // Force origin and keep path/query
-          const normalized = new URL(parsed.pathname + parsed.search + parsed.hash, desiredOrigin)
-          if (callbackUrl !== normalized.toString()) {
-            const next = new URL(url.toString())
-            next.searchParams.set('callbackUrl', normalized.toString())
-            return NextResponse.redirect(next)
-          }
-        } catch {
-          const isDev = process.env.NODE_ENV !== 'production'
-          const desiredOrigin = isDev ? 'http://localhost:3000' : url.origin
-          const next = new URL(url.toString())
-          next.searchParams.set('callbackUrl', desiredOrigin)
-          return NextResponse.redirect(next)
-        }
+// Ensure Edge runtime has sane dev defaults for NextAuth secret
+if (process.env.NODE_ENV === 'development') {
+  process.env.NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET || 'dev-secret-change-me-in-production';
+}
+
+export async function middleware(req: any) {
+  const { pathname, origin } = req.nextUrl;
+
+  // Only protect admin routes (except the login page)
+  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
+    try {
+      const token = await getToken({
+        req,
+        secret: process.env.NEXTAUTH_SECRET,
+        secureCookie: process.env.NODE_ENV === 'production',
+      });
+
+      if (!token || (token as any).role !== 'admin') {
+        const loginUrl = new URL('/admin/login', origin);
+        return NextResponse.redirect(loginUrl);
       }
+    } catch {
+      const loginUrl = new URL('/admin/login', origin);
+      return NextResponse.redirect(loginUrl);
     }
-  },
-  {
-    callbacks: {
-      authorized: ({ token, req }) => {
-        // Check if the user is trying to access admin routes
-        if (req.nextUrl.pathname.startsWith('/admin')) {
-          // Allow access to login page
-          if (req.nextUrl.pathname === '/admin/login') {
-            return true;
-          }
-          // For other admin routes, check if user is authenticated and is admin
-          return !!token && token.role === 'admin';
-        }
-        // Allow access to all other routes
-        return true;
-      },
-    },
   }
-);
+
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/auth/:path*']
+  matcher: ['/admin/:path*'],
 };

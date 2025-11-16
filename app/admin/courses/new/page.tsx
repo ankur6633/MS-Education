@@ -10,7 +10,6 @@ import toast from 'react-hot-toast';
 import { ArrowLeft, Upload, X, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-// Removed direct Cloudinary import - using API route instead
 
 const courseSchema = z.object({
   title: z.string().min(1, 'Title is required').max(200, 'Title must be less than 200 characters'),
@@ -34,6 +33,7 @@ export default function NewCourse() {
   const [thumbnailPreview, setThumbnailPreview] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
   const [features, setFeatures] = useState<string[]>(['']);
+  const [showInCarousel, setShowInCarousel] = useState(false);
 
   const {
     register,
@@ -47,16 +47,6 @@ export default function NewCourse() {
       isPaid: false,
     },
   });
-
-  // Debug form errors
-  console.log('Form errors:', errors);
-  console.log('Form is valid:', Object.keys(errors).length === 0);
-  
-  // Test form submission
-  const testSubmit = () => {
-    console.log('=== TEST SUBMIT CLICKED ===');
-    toast.success('Test button clicked!');
-  };
 
   const isPaid = watch('isPaid');
 
@@ -104,14 +94,6 @@ export default function NewCourse() {
   };
 
   const onSubmit = async (data: CourseForm) => {
-    console.log('=== FORM SUBMISSION STARTED ===');
-    console.log('Form submitted with data:', data);
-    console.log('Features:', features);
-    console.log('Thumbnail:', thumbnail);
-    
-    // Show immediate feedback
-    toast.success('Form submitted! Processing...');
-    
     if (!thumbnail) {
       toast.error('Please select a thumbnail image');
       return;
@@ -124,12 +106,10 @@ export default function NewCourse() {
       return;
     }
 
-    console.log('Valid features:', validFeatures);
     setIsUploading(true);
 
     try {
       // Upload thumbnail via API route
-      console.log('Starting thumbnail upload...');
       const uploadFormData = new FormData();
       uploadFormData.append('file', thumbnail);
       uploadFormData.append('folder', 'mseducation/thumbnails');
@@ -140,13 +120,10 @@ export default function NewCourse() {
       });
 
       if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        console.error('Upload failed:', errorText);
-        throw new Error(`Failed to upload thumbnail: ${errorText}`);
+        throw new Error('Failed to upload thumbnail');
       }
 
       const uploadResult = await uploadResponse.json();
-      console.log('Upload result:', uploadResult);
 
       // Calculate discount if both prices are provided
       let discount = undefined;
@@ -164,9 +141,8 @@ export default function NewCourse() {
         image: '📚',
         theme: 'default',
         thumbnail: uploadResult.url,
+        showInCarousel,
       };
-      
-      console.log('Creating course with data:', courseData);
       
       const response = await fetch('/api/courses', {
         method: 'POST',
@@ -177,13 +153,10 @@ export default function NewCourse() {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Course creation failed:', errorText);
-        throw new Error(`Failed to create course: ${errorText}`);
+        throw new Error('Failed to create course');
       }
 
       const course = await response.json();
-      console.log('Course created successfully:', course);
       toast.success('Course created successfully');
       router.push(`/admin/courses/${course._id}`);
     } catch (error) {
@@ -505,6 +478,26 @@ export default function NewCourse() {
             </div>
           </div>
 
+          {/* Carousel Settings */}
+          <div className="bg-white shadow-sm rounded-lg p-6">
+            <h2 className="text-lg font-medium text-gray-900 mb-6">Carousel Settings</h2>
+            
+            <div className="flex items-center">
+              <input
+                id="showInCarousel"
+                type="checkbox"
+                checked={showInCarousel}
+                onChange={(e) => setShowInCarousel(e.target.checked)}
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              />
+              <label htmlFor="showInCarousel" className="ml-2 block text-sm text-gray-700">
+                Show this course in homepage carousel
+              </label>
+            </div>
+            <p className="mt-2 text-sm text-gray-500">
+              Enable this to display the course in the promotional carousel on the homepage.
+            </p>
+          </div>
 
           {/* Actions */}
           <div className="flex items-center justify-end space-x-4">
@@ -515,19 +508,8 @@ export default function NewCourse() {
               Cancel
             </Link>
             <button
-              type="button"
-              onClick={testSubmit}
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-            >
-              Test Button
-            </button>
-            <button
               type="submit"
               disabled={isUploading}
-              onClick={(e) => {
-                console.log('=== BUTTON CLICKED ===');
-                console.log('Button clicked, form should submit');
-              }}
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isUploading ? 'Creating...' : 'Create Course'}

@@ -7,6 +7,7 @@ interface User {
   name: string
   email: string
   mobile: string
+  profileImage?: string
 }
 
 interface UserContextType {
