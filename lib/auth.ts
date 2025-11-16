@@ -1,18 +1,15 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-if (process.env.NODE_ENV !== 'production') {
+// Set development defaults only in non-production
+if (process.env.NODE_ENV === 'development') {
   const origin = 'http://localhost:3000';
-  process.env.NEXTAUTH_URL = origin;
-  process.env.NEXTAUTH_URL_INTERNAL = origin;
-  process.env.AUTH_TRUST_HOST = 'true';
-
+  process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || origin;
+  process.env.NEXTAUTH_URL_INTERNAL = process.env.NEXTAUTH_URL_INTERNAL || origin;
+  
   if (!process.env.NEXTAUTH_SECRET) {
-    process.env.NEXTAUTH_SECRET = 'dev-secret-change-me';
-  }
-
-  if (process.env.NEXTAUTH_DEBUG ?? process.env.NODE_ENV === 'development') {
-    console.info('[auth] Using NEXTAUTH_URL:', process.env.NEXTAUTH_URL);
+    process.env.NEXTAUTH_SECRET = 'dev-secret-change-me-in-production';
+    console.warn('⚠️  Using default NEXTAUTH_SECRET for development. Set a secure secret in production!');
   }
 }
 
@@ -21,23 +18,22 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'credentials',
       credentials: {
-        username: { label: 'Username', type: 'text' },
+        email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' }
       },
       async authorize(credentials) {
-        if (!credentials?.username || !credentials?.password) {
+        if (!credentials?.email || !credentials?.password) {
           return null;
         }
 
-        // For demo purposes, using hardcoded admin credentials
-        // In production, you should store these in a database
-        const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-        const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+        // Admin credentials from environment variables
+        const adminEmail = process.env.ADMIN_EMAIL || 'admin@mseducation.com';
+        const adminPassword = process.env.ADMIN_PASSWORD || 'Hello$@';
 
-        if (credentials.username === adminUsername && credentials.password === adminPassword) {
+        if (credentials.email === adminEmail && credentials.password === adminPassword) {
           return {
             id: '1',
-            username: credentials.username,
+            email: credentials.email,
             role: 'admin'
           };
         }
@@ -53,7 +49,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
-        token.username = user.username;
+        token.email = user.email;
       }
       return token;
     },
@@ -63,7 +59,7 @@ export const authOptions: NextAuthOptions = {
       const user = (session.user || {}) as any;
       user.id = token.sub || '';
       if (token.role) user.role = token.role;
-      if (token.username) user.username = token.username;
+      if (token.email) user.email = token.email;
       (session as any).user = user;
       return session;
     },
@@ -84,8 +80,6 @@ export const authOptions: NextAuthOptions = {
     signIn: '/admin/login',
   },
   secret: process.env.NEXTAUTH_SECRET,
-  // @ts-expect-error Option exists at runtime but is missing from the current type definitions
-  trustHost: process.env.NODE_ENV !== 'production',
   debug: process.env.NODE_ENV === 'development',
   // Fix callback URL issues in development
   useSecureCookies: process.env.NODE_ENV === 'production',

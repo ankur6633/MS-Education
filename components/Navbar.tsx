@@ -172,14 +172,18 @@ export function Navbar() {
                       
                       {/* Menu Items */}
                       <div className="py-2">
-                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                        <Link
+                          href="/profile"
+                          onClick={() => setShowUserMenu(false)}
+                          className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
+                        >
                           <User className="h-4 w-4" />
                           <span>Profile</span>
-                        </button>
-                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                        </Link>
+                        <Link href="/my-purchases" className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                           <ShoppingBag className="h-4 w-4" />
                           <span>My Purchases</span>
-                        </button>
+                        </Link>
                         <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                           <Settings className="h-4 w-4" />
                           <span>Settings</span>
@@ -301,14 +305,18 @@ export function Navbar() {
                   
                   {/* Menu Items */}
                   <div className="space-y-1">
-                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                    <Link
+                      href="/profile"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                    >
                       <User className="h-4 w-4" />
                       <span>Profile</span>
-                    </button>
-                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                    </Link>
+                    <Link href="/my-purchases" className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
                       <ShoppingBag className="h-4 w-4" />
                       <span>My Purchases</span>
-                    </button>
+                    </Link>
                     <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
                       <Settings className="h-4 w-4" />
                       <span>Settings</span>

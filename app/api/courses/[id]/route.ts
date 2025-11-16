@@ -21,6 +21,16 @@ export async function GET(
       )
     }
 
+    // Sort videos by order if they exist
+    if (course.videos && course.videos.length > 0) {
+      course.videos.sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+    }
+
+    // Sort PDFs by order if they exist
+    if (course.pdfs && course.pdfs.length > 0) {
+      course.pdfs.sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+    }
+
     return NextResponse.json({
       success: true,
       course

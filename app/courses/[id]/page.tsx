@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useUser } from '@/components/providers/UserProvider'
+import toast from 'react-hot-toast'
 
 interface Course {
   _id: string;
@@ -32,26 +33,20 @@ interface Course {
   level?: string;
   category?: string;
   videos?: Video[];
-  curriculum?: CurriculumItem[];
   requirements?: string[];
   whatYouWillLearn?: string[];
 }
 
 interface Video {
-  _id: string;
+  _id?: string;
   title: string;
-  duration: string;
+  duration: string | number;
   description?: string;
   videoUrl?: string;
+  url?: string;
   isPreview?: boolean;
 }
 
-interface CurriculumItem {
-  _id: string;
-  title: string;
-  videos: Video[];
-  duration: string;
-}
 
 export default function CourseDetailPage({ params }: { params: { id: string } }) {
   const [course, setCourse] = useState<Course | null>(null)
@@ -61,16 +56,69 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
   const [showLoginModal, setShowLoginModal] = useState(false)
   const { user, login } = useUser()
 
+  // Format duration from seconds to MM:SS or HH:MM:SS
+  const formatDuration = (duration: string | number): string => {
+    if (typeof duration === 'string') {
+      // If it's already a string, try to parse it
+      const parts = duration.split(':')
+      if (parts.length >= 2) {
+        return duration // Already formatted
+      }
+      const seconds = parseInt(duration)
+      if (!isNaN(seconds)) {
+        const hours = Math.floor(seconds / 3600)
+        const minutes = Math.floor((seconds % 3600) / 60)
+        const secs = seconds % 60
+        if (hours > 0) {
+          return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+        }
+        return `${minutes}:${secs.toString().padStart(2, '0')}`
+      }
+      return duration
+    }
+    // If it's a number (seconds)
+    const hours = Math.floor(duration / 3600)
+    const minutes = Math.floor((duration % 3600) / 60)
+    const secs = duration % 60
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+    }
+    return `${minutes}:${secs.toString().padStart(2, '0')}`
+  }
+
+  // Map video data from API to frontend format
+  const mapVideoData = (videos: any[]): Video[] => {
+    if (!videos) return []
+    // Sort videos by order first
+    const sortedVideos = [...videos].sort((a, b) => (a.order || 0) - (b.order || 0))
+    return sortedVideos.map((video, index) => ({
+      _id: video._id || String(index),
+      title: video.title,
+      duration: formatDuration(video.duration || 0),
+      description: video.description,
+      videoUrl: video.url || video.videoUrl, // Map url to videoUrl
+      url: video.url || video.videoUrl,
+      isPreview: video.isPreview || index === 0
+    }))
+  }
+
   useEffect(() => {
     const fetchCourse = async () => {
       try {
         const response = await fetch(`/api/courses/${params.id}`)
         if (response.ok) {
           const data = await response.json()
-          setCourse(data.course)
-          if (data.course.videos && data.course.videos.length > 0) {
-            setSelectedVideo(data.course.videos[0])
+          const courseData = data.course
+          
+          // Map videos to frontend format
+          if (courseData.videos) {
+            courseData.videos = mapVideoData(courseData.videos)
           }
+          
+          setCourse(courseData)
+          
+          // Don't set selected video initially - wait for enrollment check
+          // Video will be set after enrollment status is verified
         }
       } catch (error) {
         console.error('Error fetching course:', error)
@@ -82,14 +130,140 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
     fetchCourse()
   }, [params.id])
 
-  const handleEnroll = () => {
+  // Check enrollment status
+  useEffect(() => {
+    const checkEnrollment = async () => {
+      if (!user) {
+        setIsEnrolled(false)
+        return
+      }
+
+      try {
+        // Send user email as query parameter
+        const response = await fetch(`/api/courses/${params.id}/enroll?email=${encodeURIComponent(user.email)}`)
+        if (response.ok) {
+          const data = await response.json()
+          setIsEnrolled(data.enrolled || false)
+        }
+      } catch (error) {
+        console.error('Error checking enrollment:', error)
+      }
+    }
+
+    checkEnrollment()
+  }, [user, params.id])
+
+  // Set selected video after enrollment status is checked
+  useEffect(() => {
+    if (course?.videos && course.videos.length > 0 && user && isEnrolled) {
+      // Only set video if user is enrolled
+      if (!selectedVideo) {
+        setSelectedVideo(course.videos[0])
+      }
+    } else if (!isEnrolled) {
+      // Clear selected video if not enrolled
+      setSelectedVideo(null)
+    }
+  }, [course, user, isEnrolled])
+
+  const handleEnroll = async () => {
     if (!user) {
       setShowLoginModal(true)
       return
     }
-    // TODO: Implement enrollment logic
-    setIsEnrolled(true)
-    alert('Enrollment successful! You now have access to this course.')
+
+    try {
+      // Show loading toast
+      const loadingToast = toast.loading('Enrolling in course...', {
+        position: 'top-center',
+        id: 'enroll-loading',
+      })
+
+      const response = await fetch(`/api/courses/${params.id}/enroll`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: user.email })
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        
+        // Dismiss loading toast
+        toast.dismiss(loadingToast)
+        
+        // Update enrollment status
+        setIsEnrolled(true)
+
+        // Refresh enrollment status and update UI
+        setTimeout(async () => {
+          try {
+            const checkResponse = await fetch(`/api/courses/${params.id}/enroll?email=${encodeURIComponent(user.email)}`)
+            if (checkResponse.ok) {
+              const enrollmentData = await checkResponse.json()
+              setIsEnrolled(enrollmentData.enrolled || false)
+              
+              // If enrolled, set first video as selected
+              if (enrollmentData.enrolled && course?.videos && course.videos.length > 0) {
+                setSelectedVideo(course.videos[0])
+              }
+            }
+          } catch (error) {
+            console.error('Error checking enrollment:', error)
+          }
+        }, 500)
+
+        // Show success toast with action buttons
+        toast.success(
+          (t) => (
+            <div className="flex flex-col gap-3 min-w-[320px]">
+              <div className="font-semibold text-base">
+                🎉 Enrollment Successful!
+              </div>
+              <div className="text-sm opacity-90">
+                You now have full access to this course. Start learning right away!
+              </div>
+              <div className="flex gap-2 mt-2">
+                <Link
+                  href="/my-purchases?enrolled=true"
+                  onClick={() => toast.dismiss(t.id)}
+                  className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors text-sm font-medium flex-1 text-center"
+                >
+                  View in My Purchases
+                </Link>
+                <button
+                  onClick={() => toast.dismiss(t.id)}
+                  className="px-4 py-2 bg-neutral-600 hover:bg-neutral-700 text-white rounded-lg transition-colors text-sm font-medium"
+                >
+                  Stay
+                </button>
+              </div>
+            </div>
+          ),
+          {
+            duration: 8000,
+            position: 'top-center',
+            id: 'enrollment-success',
+          }
+        )
+      } else {
+        const errorData = await response.json()
+        toast.dismiss(loadingToast)
+        toast.error(errorData.error || 'Failed to enroll in course. Please try again.', {
+          position: 'top-center',
+          duration: 5000,
+          id: 'enrollment-error',
+        })
+      }
+    } catch (error) {
+      console.error('Error enrolling in course:', error)
+      toast.error('Failed to enroll in course. Please try again.', {
+        position: 'top-center',
+        duration: 5000,
+        id: 'enrollment-error',
+      })
+    }
   }
 
   const handleVideoClick = (video: Video) => {
@@ -100,49 +274,42 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
     
     // Check if user can access this video
     if (!canAccessVideo(video)) {
-      alert('You need to enroll in this course to access this video.')
+      toast.error('Please enroll in this course to access videos', {
+        icon: '🔒',
+        duration: 4000,
+      })
       return
     }
     
     setSelectedVideo(video)
+    toast.success(`Playing: ${video.title}`, {
+      icon: '▶️',
+      duration: 2000,
+    })
   }
 
   const canAccessVideo = (video: Video) => {
     if (!user) return false
     
-    // If course is free, user can access all videos
-    if (!course?.isPaid) return true
-    
-    // If course is paid, user needs to be enrolled
-    if (course?.isPaid && !isEnrolled) return false
-    
-    // First video is always accessible as preview
-    if (course?.videos && course.videos[0]?._id === video._id) return true
+    // User must be enrolled to access any video (both paid and free courses)
+    if (!isEnrolled) {
+      return false
+    }
     
     // For enrolled users, all videos are accessible
-    return isEnrolled
+    return true
   }
 
   const getAccessibleVideos = () => {
     if (!course?.videos) return []
     
-    if (!user) {
-      // Not logged in - show only first video as preview
-      return course.videos.slice(0, 1)
+    // Only show videos if user is enrolled
+    if (!user || !isEnrolled) {
+      return []
     }
     
-    if (!course.isPaid) {
-      // Free course - show all videos
-      return course.videos
-    }
-    
-    if (isEnrolled) {
-      // Paid course, enrolled - show all videos
-      return course.videos
-    }
-    
-    // Paid course, not enrolled - show only first video
-    return course.videos.slice(0, 1)
+    // For enrolled users, show all videos
+    return course.videos
   }
 
   if (isLoading) {
@@ -200,12 +367,12 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
           <div className="lg:col-span-2 space-y-8">
             {/* Video Player */}
             <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-              <div className="aspect-video bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center relative">
+              <div className="aspect-video bg-black relative">
                 {selectedVideo ? (
-                  <div className="text-center">
+                  <>
                     {!user ? (
-                      <div className="bg-black bg-opacity-50 absolute inset-0 flex items-center justify-center">
-                        <div className="bg-white rounded-lg p-6 text-center">
+                      <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center z-10">
+                        <div className="bg-white rounded-lg p-6 text-center max-w-md mx-4">
                           <Lock className="h-12 w-12 text-primary-500 mx-auto mb-4" />
                           <h3 className="text-lg font-semibold text-neutral-800 mb-2">Login Required</h3>
                           <p className="text-neutral-600 mb-4">Please login to watch this video</p>
@@ -215,42 +382,78 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
                         </div>
                       </div>
                     ) : !canAccessVideo(selectedVideo) ? (
-                      <div className="bg-black bg-opacity-50 absolute inset-0 flex items-center justify-center">
-                        <div className="bg-white rounded-lg p-6 text-center">
+                      <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center z-10">
+                        <div className="bg-white rounded-lg p-6 text-center max-w-md mx-4">
                           <Lock className="h-12 w-12 text-primary-500 mx-auto mb-4" />
                           <h3 className="text-lg font-semibold text-neutral-800 mb-2">Enrollment Required</h3>
-                          <p className="text-neutral-600 mb-4">Please enroll in this course to access this video</p>
+                          <p className="text-neutral-600 mb-4">
+                            Please enroll in this course to access videos and content
+                          </p>
                           <Button onClick={handleEnroll}>
-                            Enroll Now
+                            {course?.isPaid ? 'Enroll Now' : 'Enroll for Free'}
                           </Button>
                         </div>
                       </div>
+                    ) : selectedVideo.videoUrl || selectedVideo.url ? (
+                      <video
+                        key={selectedVideo.videoUrl || selectedVideo.url}
+                        className="w-full h-full"
+                        controls
+                        controlsList="nodownload"
+                        preload="metadata"
+                        style={{ maxHeight: '100%' }}
+                      >
+                        <source src={selectedVideo.videoUrl || selectedVideo.url} type="video/mp4" />
+                        <source src={selectedVideo.videoUrl || selectedVideo.url} type="video/webm" />
+                        <source src={selectedVideo.videoUrl || selectedVideo.url} type="video/ogg" />
+                        Your browser does not support the video tag.
+                      </video>
                     ) : (
-                      <div className="text-center">
-                        <div className="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <Play className="h-8 w-8 text-white" />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center text-white">
+                          <div className="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Play className="h-8 w-8 text-white" />
+                          </div>
+                          <h3 className="text-xl font-semibold mb-2">{selectedVideo.title}</h3>
+                          <p className="text-neutral-300">{selectedVideo.duration}</p>
+                          {selectedVideo.description && (
+                            <p className="text-sm text-neutral-400 mt-2">{selectedVideo.description}</p>
+                          )}
+                          <p className="text-sm text-neutral-400 mt-4">Video URL not available</p>
                         </div>
-                        <h3 className="text-xl font-semibold text-neutral-800 mb-2">{selectedVideo.title}</h3>
-                        <p className="text-neutral-600">{selectedVideo.duration}</p>
-                        {selectedVideo.description && (
-                          <p className="text-sm text-neutral-500 mt-2">{selectedVideo.description}</p>
-                        )}
                       </div>
                     )}
-                  </div>
+                  </>
                 ) : (
-                  <div className="text-center">
-                    <div className="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Play className="h-8 w-8 text-white" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="text-center text-white">
+                      <div className="w-20 h-20 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Play className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-xl font-semibold mb-2">Course Preview</h3>
+                      <p className="text-neutral-300">Click on a video to start learning</p>
+                      {!user && (
+                        <p className="text-sm text-neutral-400 mt-2">Login required to watch videos</p>
+                      )}
                     </div>
-                    <h3 className="text-xl font-semibold text-neutral-800 mb-2">Course Preview</h3>
-                    <p className="text-neutral-600">Click on a video to start learning</p>
-                    {!user && (
-                      <p className="text-sm text-neutral-500 mt-2">Login required to watch videos</p>
-                    )}
                   </div>
                 )}
               </div>
+              {/* Video Title and Info */}
+              {selectedVideo && canAccessVideo(selectedVideo) && (
+                <div className="p-4 border-t border-neutral-200">
+                  <h3 className="text-lg font-semibold text-neutral-800 mb-1">{selectedVideo.title}</h3>
+                  <div className="flex items-center space-x-4 text-sm text-neutral-600">
+                    <span className="flex items-center">
+                      <Clock className="h-4 w-4 mr-1" />
+                      {selectedVideo.duration}
+                    </span>
+                    {selectedVideo.description && (
+                      <p className="text-neutral-600">{selectedVideo.description}</p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Course Description */}
@@ -274,146 +477,132 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
               </div>
             )}
 
-            {/* Course Curriculum */}
-            {course.curriculum && course.curriculum.length > 0 && (
+            {/* Course Videos List */}
+            {course.videos && course.videos.length > 0 && (
               <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-neutral-800 mb-4">Course Curriculum</h2>
-                <div className="space-y-4">
-                  {course.curriculum.map((section, index) => (
-                    <div key={section._id} className="border border-neutral-200 rounded-lg overflow-hidden">
-                      <div className="bg-neutral-50 px-4 py-3 border-b border-neutral-200">
-                        <h3 className="font-semibold text-neutral-800">{section.title}</h3>
-                        <p className="text-sm text-neutral-600">{section.duration}</p>
-                      </div>
-                      <div className="p-4">
-                        <div className="space-y-2">
-                          {section.videos.map((video, videoIndex) => {
-                            const hasAccess = canAccessVideo(video)
-                            const isAccessible = getAccessibleVideos().some(v => v._id === video._id)
-                            
-                            return (
-                              <button
-                                key={video._id}
-                                onClick={() => handleVideoClick(video)}
-                                disabled={!isAccessible}
-                                className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${
-                                  selectedVideo?._id === video._id
-                                    ? 'bg-primary-50 text-primary-700 border border-primary-200'
-                                    : isAccessible
-                                    ? 'hover:bg-neutral-50 text-neutral-700'
-                                    : 'opacity-50 cursor-not-allowed text-neutral-400'
-                                }`}
-                              >
-                                <div className="flex items-center space-x-3">
-                                  {hasAccess ? (
-                                    <Play className="h-4 w-4" />
-                                  ) : (
-                                    <Lock className="h-4 w-4" />
-                                  )}
-                                  <span className="text-sm font-medium">{video.title}</span>
-                                  {video.isPreview && (
-                                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Preview</span>
-                                  )}
-                                  {!hasAccess && !video.isPreview && (
-                                    <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded">
-                                      {!user ? 'Login Required' : 'Enroll Required'}
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <span className="text-sm text-neutral-500">{video.duration}</span>
-                                  {!hasAccess && (
-                                    <Lock className="h-3 w-3 text-neutral-400" />
-                                  )}
-                                </div>
-                              </button>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <h2 className="text-xl font-bold text-neutral-800 mb-4">Course Videos</h2>
+                {!user || !isEnrolled ? (
+                  <div className="text-center py-8">
+                    <Lock className="h-12 w-12 text-neutral-400 mx-auto mb-4" />
+                    <p className="text-neutral-600 mb-4">
+                      {!user 
+                        ? 'Please login to view course videos'
+                        : 'Please enroll in this course to access videos'}
+                    </p>
+                    {!user ? (
+                      <Button onClick={() => setShowLoginModal(true)}>
+                        Login to Continue
+                      </Button>
+                    ) : (
+                      <Button onClick={handleEnroll}>
+                        {course.isPaid ? 'Enroll Now' : 'Enroll for Free'}
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {course.videos.map((video, index) => {
+                      const hasAccess = canAccessVideo(video)
+                      
+                      return (
+                        <button
+                          key={video._id || index}
+                          onClick={() => handleVideoClick(video)}
+                          className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors ${
+                            selectedVideo?._id === video._id
+                              ? 'bg-primary-50 text-primary-700 border border-primary-200'
+                              : 'hover:bg-neutral-50 text-neutral-700'
+                          }`}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <Play className="h-4 w-4" />
+                            <span className="text-sm font-medium">{video.title}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm text-neutral-500">{video.duration}</span>
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
             )}
 
             {/* Course Materials */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-xl font-bold text-neutral-800 mb-4">Course Materials</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* PDF Materials */}
-                <div className="border border-neutral-200 rounded-lg p-4">
-                  <div className="flex items-center space-x-3 mb-3">
-                    <FileText className="h-5 w-5 text-red-500" />
-                    <h3 className="font-semibold text-neutral-800">PDF Materials</h3>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
-                      <span className="text-sm text-neutral-700">Course Notes</span>
-                      {!user ? (
-                        <Lock className="h-4 w-4 text-neutral-400" />
-                      ) : (
-                        <Download className="h-4 w-4 text-primary-500 cursor-pointer hover:text-primary-600" />
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
-                      <span className="text-sm text-neutral-700">Practice Questions</span>
-                      {!user ? (
-                        <Lock className="h-4 w-4 text-neutral-400" />
-                      ) : (
-                        <Download className="h-4 w-4 text-primary-500 cursor-pointer hover:text-primary-600" />
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
-                      <span className="text-sm text-neutral-700">Reference Books</span>
-                      {!user ? (
-                        <Lock className="h-4 w-4 text-neutral-400" />
-                      ) : (
-                        <Download className="h-4 w-4 text-primary-500 cursor-pointer hover:text-primary-600" />
-                      )}
-                    </div>
-                  </div>
-                  {!user && (
-                    <p className="text-xs text-neutral-500 mt-2">Login required to download materials</p>
-                  )}
-                </div>
-
-                {/* Video Materials */}
-                <div className="border border-neutral-200 rounded-lg p-4">
-                  <div className="flex items-center space-x-3 mb-3">
-                    <Play className="h-5 w-5 text-blue-500" />
-                    <h3 className="font-semibold text-neutral-800">Video Content</h3>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
-                      <span className="text-sm text-neutral-700">Lecture Videos</span>
-                      <span className="text-xs text-neutral-500">
-                        {getAccessibleVideos().length} / {course.videos?.length || 0} available
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
-                      <span className="text-sm text-neutral-700">Live Sessions</span>
-                      {!user ? (
-                        <Lock className="h-4 w-4 text-neutral-400" />
-                      ) : (
-                        <Calendar className="h-4 w-4 text-primary-500" />
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
-                      <span className="text-sm text-neutral-700">Recorded Sessions</span>
-                      {!user ? (
-                        <Lock className="h-4 w-4 text-neutral-400" />
-                      ) : (
-                        <Play className="h-4 w-4 text-primary-500" />
-                      )}
-                    </div>
-                  </div>
-                  {!user && (
-                    <p className="text-xs text-neutral-500 mt-2">Login required to access videos</p>
+            {(!user || !isEnrolled) ? (
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold text-neutral-800 mb-4">Course Materials</h2>
+                <div className="text-center py-8">
+                  <Lock className="h-12 w-12 text-neutral-400 mx-auto mb-4" />
+                  <p className="text-neutral-600 mb-4">
+                    {!user 
+                      ? 'Please login to view course materials'
+                      : 'Please enroll in this course to access materials'}
+                  </p>
+                  {!user ? (
+                    <Button onClick={() => setShowLoginModal(true)}>
+                      Login to Continue
+                    </Button>
+                  ) : (
+                    <Button onClick={handleEnroll}>
+                      {course.isPaid ? 'Enroll Now' : 'Enroll for Free'}
+                    </Button>
                   )}
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold text-neutral-800 mb-4">Course Materials</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* PDF Materials */}
+                  <div className="border border-neutral-200 rounded-lg p-4">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <FileText className="h-5 w-5 text-red-500" />
+                      <h3 className="font-semibold text-neutral-800">PDF Materials</h3>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
+                        <span className="text-sm text-neutral-700">Course Notes</span>
+                        <Download className="h-4 w-4 text-primary-500 cursor-pointer hover:text-primary-600" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
+                        <span className="text-sm text-neutral-700">Practice Questions</span>
+                        <Download className="h-4 w-4 text-primary-500 cursor-pointer hover:text-primary-600" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
+                        <span className="text-sm text-neutral-700">Reference Books</span>
+                        <Download className="h-4 w-4 text-primary-500 cursor-pointer hover:text-primary-600" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Video Materials */}
+                  <div className="border border-neutral-200 rounded-lg p-4">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <Play className="h-5 w-5 text-blue-500" />
+                      <h3 className="font-semibold text-neutral-800">Video Content</h3>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
+                        <span className="text-sm text-neutral-700">Lecture Videos</span>
+                        <span className="text-xs text-neutral-500">
+                          {course.videos?.length || 0} available
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
+                        <span className="text-sm text-neutral-700">Live Sessions</span>
+                        <Calendar className="h-4 w-4 text-primary-500" />
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-neutral-50 rounded">
+                        <span className="text-sm text-neutral-700">Recorded Sessions</span>
+                        <Play className="h-4 w-4 text-primary-500" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Requirements */}
             {course.requirements && course.requirements.length > 0 && (
@@ -478,13 +667,34 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
               </div>
 
               {/* Enroll Button */}
-              <Button 
-                onClick={handleEnroll}
-                className="w-full mb-4"
-                size="lg"
-              >
-                {isEnrolled ? 'Enrolled' : 'Enroll Now'}
-              </Button>
+              {course.isPaid ? (
+                <Button 
+                  onClick={handleEnroll}
+                  className="w-full mb-4"
+                  size="lg"
+                  disabled={isEnrolled}
+                >
+                  {isEnrolled ? 'Enrolled' : 'Enroll Now'}
+                </Button>
+              ) : (
+                <Button 
+                  onClick={async () => {
+                    if (!user) {
+                      setShowLoginModal(true)
+                      return
+                    }
+                    // For free courses, allow enrollment to track in My Purchases
+                    if (!isEnrolled) {
+                      await handleEnroll()
+                    }
+                  }}
+                  className="w-full mb-4"
+                  size="lg"
+                  disabled={isEnrolled}
+                >
+                  {isEnrolled ? 'Enrolled - Start Learning' : user ? 'Enroll for Free' : 'Login to Access'}
+                </Button>
+              )}
 
               {/* Course Stats */}
               <div className="space-y-3 border-t border-neutral-200 pt-4">
