@@ -101,22 +101,8 @@ export default function MyPurchasesPage() {
   const handleRefresh = () => {
     setIsRefreshing(true);
     setIsLoading(true);
-    toast.loading('Refreshing your courses...', {
-      id: 'refresh-courses',
-      position: 'top-center',
-    });
     fetchEnrolledCourses().then(() => {
-      toast.success('Courses refreshed successfully!', {
-        id: 'refresh-courses',
-        icon: '✅',
-        duration: 2000,
-      });
     }).catch(() => {
-      toast.error('Failed to refresh courses', {
-        id: 'refresh-courses',
-        icon: '❌',
-        duration: 3000,
-      });
     });
   };
 

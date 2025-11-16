@@ -7,6 +7,11 @@ import { profileUpdateSchema } from '@/lib/validators/profileSchema';
 
 // Helper to extract email from session, header, or query param
 async function getRequestEmail(request: NextRequest): Promise<string | null> {
+	// Resolution order:
+	// 1) NextAuth session (admin dashboard and any authenticated session)
+	// 2) 'x-user-email' header set by frontend UserProvider context
+	// 3) 'email' query param as last resort (e.g., debugging/tools)
+	// This order keeps server-auth first while supporting client context in public areas.
 	// Try NextAuth session (admin sessions)
 	try {
 		const session = await getServerSession(authOptions);
@@ -97,10 +102,14 @@ export async function PUT(request: NextRequest) {
 
 		// If mobile is changing, ensure uniqueness
 		if (mobile && mobile !== user.mobile) {
-			const existing = await User.findOne({ mobile });
-			if (existing) {
+			const existing = await User.findOne({ mobile }, '_id name email');
+			if (existing && existing._id.toString() !== user._id.toString()) {
 				return NextResponse.json(
-					{ success: false, error: 'Mobile number already in use' },
+					{
+						success: false,
+						field: 'mobile',
+						error: 'Mobile number already in use'
+					},
 					{ status: 409 }
 				);
 			}

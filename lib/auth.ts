@@ -65,6 +65,8 @@ export const authOptions: NextAuthOptions = {
     },
     async redirect({ url, baseUrl }) {
       try {
+        // If NextAuth didn't provide a baseUrl, fall back to root
+        if (!baseUrl) return '/';
         // Allow relative callback URLs
         if (url.startsWith('/')) return `${baseUrl}${url}`;
         const to = new URL(url);
@@ -73,7 +75,7 @@ export const authOptions: NextAuthOptions = {
         if (to.origin === base.origin) return url;
       } catch {}
       // Fallback to base URL to avoid malformed concatenation
-      return baseUrl;
+      return baseUrl || '/';
     }
   },
   pages: {

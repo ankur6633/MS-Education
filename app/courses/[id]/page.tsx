@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowLeft, Star, Clock, Users, Play, CheckCircle, Download, Share2, BookOpen, Award, Calendar, Globe, Lock, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
@@ -57,7 +57,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
   const { user, login } = useUser()
 
   // Format duration from seconds to MM:SS or HH:MM:SS
-  const formatDuration = (duration: string | number): string => {
+  const formatDuration = useCallback((duration: string | number): string => {
     if (typeof duration === 'string') {
       // If it's already a string, try to parse it
       const parts = duration.split(':')
@@ -84,10 +84,10 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
       return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
     }
     return `${minutes}:${secs.toString().padStart(2, '0')}`
-  }
+  }, [])
 
   // Map video data from API to frontend format
-  const mapVideoData = (videos: any[]): Video[] => {
+  const mapVideoData = useCallback((videos: any[]): Video[] => {
     if (!videos) return []
     // Sort videos by order first
     const sortedVideos = [...videos].sort((a, b) => (a.order || 0) - (b.order || 0))
@@ -100,7 +100,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
       url: video.url || video.videoUrl,
       isPreview: video.isPreview || index === 0
     }))
-  }
+  }, [formatDuration])
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -128,7 +128,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
     }
 
     fetchCourse()
-  }, [params.id])
+  }, [params.id, mapVideoData])
 
   // Check enrollment status
   useEffect(() => {
@@ -164,7 +164,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
       // Clear selected video if not enrolled
       setSelectedVideo(null)
     }
-  }, [course, user, isEnrolled])
+  }, [course, user, isEnrolled, selectedVideo])
 
   const handleEnroll = async () => {
     if (!user) {
@@ -214,39 +214,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
           }
         }, 500)
 
-        // Show success toast with action buttons
-        toast.success(
-          (t) => (
-            <div className="flex flex-col gap-3 min-w-[320px]">
-              <div className="font-semibold text-base">
-                🎉 Enrollment Successful!
-              </div>
-              <div className="text-sm opacity-90">
-                You now have full access to this course. Start learning right away!
-              </div>
-              <div className="flex gap-2 mt-2">
-                <Link
-                  href="/my-purchases?enrolled=true"
-                  onClick={() => toast.dismiss(t.id)}
-                  className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors text-sm font-medium flex-1 text-center"
-                >
-                  View in My Purchases
-                </Link>
-                <button
-                  onClick={() => toast.dismiss(t.id)}
-                  className="px-4 py-2 bg-neutral-600 hover:bg-neutral-700 text-white rounded-lg transition-colors text-sm font-medium"
-                >
-                  Stay
-                </button>
-              </div>
-            </div>
-          ),
-          {
-            duration: 8000,
-            position: 'top-center',
-            id: 'enrollment-success',
-          }
-        )
+        // Quiet success: no intrusive toast after enrollment
       } else {
         const errorData = await response.json()
         toast.dismiss(loadingToast)

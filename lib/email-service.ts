@@ -22,7 +22,8 @@ class EmailService {
   private fromName: string;
 
   constructor() {
-    this.fromEmail = process.env.EMAIL_FROM || 'noreply@mseducation.in';
+    // Default sender: prefer explicit EMAIL_FROM, else fall back to EMAIL_USER to satisfy SMTP providers like Gmail
+    this.fromEmail = process.env.EMAIL_FROM || process.env.EMAIL_USER || 'noreply@mseducation.in';
     this.fromName = process.env.EMAIL_FROM_NAME || 'MS Education';
   }
 
@@ -37,12 +38,13 @@ class EmailService {
       secure: process.env.EMAIL_SECURE === 'true', // true for 465, false for other ports
       auth: {
         user: process.env.EMAIL_USER || '',
-        pass: process.env.EMAIL_PASSWORD || ''
+        // Support both EMAIL_PASSWORD and EMAIL_PASS (user might set either)
+        pass: process.env.EMAIL_PASSWORD || process.env.EMAIL_PASS || ''
       }
     };
 
     if (!config.auth.user || !config.auth.pass) {
-      throw new Error('Email credentials not configured. Please set EMAIL_USER and EMAIL_PASSWORD in environment variables.');
+      throw new Error('Email credentials not configured. Please set EMAIL_USER and EMAIL_PASSWORD (or EMAIL_PASS) in environment variables.');
     }
 
     this.transporter = nodemailer.createTransport(config);

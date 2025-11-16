@@ -5,7 +5,7 @@ export interface IUser extends Document {
   email: string;
   mobile: string;
   password: string;
-  enrolledCourses: string[]; // Array of course IDs
+  enrolledCourses: mongoose.Types.ObjectId[]; // Array of course IDs
   // Profile fields
   profileImage?: string;
   address?: string;

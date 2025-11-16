@@ -14,7 +14,7 @@ const testEmail = async (recipientEmail) => {
   console.log('🔧 Testing Email Configuration...\n');
 
   // Check if required environment variables are set
-  const requiredVars = ['EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_USER', 'EMAIL_PASSWORD'];
+  const requiredVars = ['EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_USER', (process.env.EMAIL_PASSWORD || process.env.EMAIL_PASS) ? null : 'EMAIL_PASSWORD'].filter(Boolean);
   const missingVars = requiredVars.filter(varName => !process.env[varName]);
 
   if (missingVars.length > 0) {
@@ -37,7 +37,7 @@ const testEmail = async (recipientEmail) => {
     secure: process.env.EMAIL_SECURE === 'true',
     auth: {
       user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD
+      pass: process.env.EMAIL_PASSWORD || process.env.EMAIL_PASS
     }
   });
 

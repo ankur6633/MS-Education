@@ -5,15 +5,22 @@ import User from '@/lib/models/User';
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
-    
-    const { email, password } = await request.json();
-    
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
+
+    const { identifier, email, mobile, password } = await request.json();
+    const providedIdentifier = identifier || email || mobile;
+
+    if (!providedIdentifier || !password) {
+      return NextResponse.json({ error: 'Identifier and password are required' }, { status: 400 });
     }
 
-    const user = await User.findOne({ email });
-    
+    // Determine if identifier is email or mobile (digits => mobile)
+    const idStr: string = String(providedIdentifier).trim();
+    const isEmail = idStr.includes('@');
+
+    const user = await User.findOne(
+      isEmail ? { email: idStr.toLowerCase() } : { mobile: idStr }
+    );
+
     if (!user) {
       return NextResponse.json({ 
         success: false,

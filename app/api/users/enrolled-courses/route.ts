@@ -69,7 +69,6 @@ export async function GET(request: NextRequest) {
       courses: enrolledCourses
     });
   } catch (error) {
-    console.error('Error fetching enrolled courses:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

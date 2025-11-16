@@ -38,6 +38,7 @@ type ProfileEditFormProps = {
 export default function ProfileEditForm({ initialUser, onCancel, onSaved }: ProfileEditFormProps) {
 	const { login } = useUser()
 	const [submitting, setSubmitting] = useState(false)
+	const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})
 
 	const defaultValues: FormValues = useMemo(
 		() => ({
@@ -65,6 +66,7 @@ export default function ProfileEditForm({ initialUser, onCancel, onSaved }: Prof
 
 	const submit = async (values: FormValues) => {
 		setSubmitting(true)
+		setFieldErrors({})
 		try {
 			// Normalize skills to array
 			const normalizedSkills = (values.skills || '')
@@ -98,6 +100,10 @@ export default function ProfileEditForm({ initialUser, onCancel, onSaved }: Prof
 
 			const data = await res.json()
 			if (!res.ok || !data?.success) {
+				if (data?.field) {
+					setFieldErrors({ [data.field]: data.error || 'Invalid value' })
+					return
+				}
 				throw new Error(data?.error || 'Failed to update profile')
 			}
 
@@ -133,7 +139,9 @@ export default function ProfileEditForm({ initialUser, onCancel, onSaved }: Prof
 			onSaved?.(full)
 		} catch (err: any) {
 			console.error('Update profile error:', err)
-			toast.error(err?.message || 'Failed to update profile')
+			if (!fieldErrors.mobile) {
+				toast.error(err?.message || 'Failed to update profile')
+			}
 		} finally {
 			setSubmitting(false)
 		}
@@ -190,8 +198,10 @@ export default function ProfileEditForm({ initialUser, onCancel, onSaved }: Prof
 					pattern="[0-9]{10}"
 					title="Enter exactly 10 digits"
 					maxLength={10}
+					className={fieldErrors.mobile && !errors.mobile ? 'border-red-500 focus-visible:ring-red-500' : undefined}
 				/>
 				{errors.mobile && <p className="mt-2 text-sm text-red-600">{errors.mobile.message}</p>}
+				{fieldErrors.mobile && !errors.mobile && <p className="mt-2 text-sm text-red-600">{fieldErrors.mobile}</p>}
 			</div>
 
 			<div>
