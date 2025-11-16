@@ -37,6 +37,7 @@ export default function AdminLogin() {
         email: data.email,
         password: data.password,
         redirect: false,
+        callbackUrl: '/admin',
       });
 
       if (result?.error) {

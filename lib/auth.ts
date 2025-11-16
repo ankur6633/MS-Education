@@ -33,8 +33,15 @@ export const authOptions: NextAuthOptions = {
         }
 
         // Admin credentials from environment variables
-        const adminEmail = (process.env.ADMIN_EMAIL || 'admin@mseducation.com').trim().toLowerCase();
-        const adminPassword = (process.env.ADMIN_PASSWORD || 'Hello$@').trim();
+        const isProd = process.env.NODE_ENV === 'production';
+        const adminEmail = (
+          process.env.ADMIN_EMAIL ||
+          (!isProd ? 'admin@mseducation.com' : '')
+        ).trim().toLowerCase();
+        const adminPassword = (
+          process.env.ADMIN_PASSWORD ||
+          (!isProd ? 'Hello$@' : '')
+        ).trim();
         const inputEmail = credentials.email.trim().toLowerCase();
         const inputPassword = credentials.password.trim();
 
