@@ -68,20 +68,6 @@ export const authOptions: NextAuthOptions = {
       if (token.email) user.email = token.email;
       (session as any).user = user;
       return session;
-    },
-    async redirect({ url, baseUrl }) {
-      try {
-        // If NextAuth didn't provide a baseUrl, fall back to root
-        if (!baseUrl) return '/';
-        // Allow relative callback URLs
-        if (url.startsWith('/')) return `${baseUrl}${url}`;
-        const to = new URL(url);
-        const base = new URL(baseUrl);
-        // Allow same-origin URLs
-        if (to.origin === base.origin) return url;
-      } catch {}
-      // Fallback to base URL to avoid malformed concatenation
-      return baseUrl || '/';
     }
   },
   pages: {
@@ -89,19 +75,4 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
   debug: process.env.NODE_ENV === 'development',
-  // Fix callback URL issues in development
-  useSecureCookies: process.env.NODE_ENV === 'production',
-  cookies: {
-    sessionToken: {
-      name: process.env.NODE_ENV === 'production' 
-        ? `__Secure-next-auth.session-token` 
-        : `next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
-    },
-  },
 };
