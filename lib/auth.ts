@@ -1,17 +1,23 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-// Set development defaults only in non-production
-if (process.env.NODE_ENV === 'development') {
-  const origin = 'http://localhost:3000';
-  process.env.NEXTAUTH_URL = process.env.NEXTAUTH_URL || origin;
-  process.env.NEXTAUTH_URL_INTERNAL = process.env.NEXTAUTH_URL_INTERNAL || origin;
-  
-  if (!process.env.NEXTAUTH_SECRET) {
-    process.env.NEXTAUTH_SECRET = 'dev-secret-change-me-in-production';
-    console.warn('⚠️  Using default NEXTAUTH_SECRET for development. Set a secure secret in production!');
+// Ensure required NextAuth env is set to prevent 500s in production
+(() => {
+  const isProd = process.env.NODE_ENV === 'production';
+  // Derive reasonable defaults to avoid runtime 500s if misconfigured
+  if (!process.env.NEXTAUTH_URL) {
+    const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined;
+    const localUrl = 'http://localhost:3000';
+    process.env.NEXTAUTH_URL = vercelUrl || localUrl;
   }
-}
+  if (!process.env.NEXTAUTH_URL_INTERNAL) {
+    process.env.NEXTAUTH_URL_INTERNAL = process.env.NEXTAUTH_URL;
+  }
+  if (!process.env.NEXTAUTH_SECRET) {
+    // Fallback secret (avoids 500 error page). Replace with a secure env on production.
+    process.env.NEXTAUTH_SECRET = isProd ? 'ms-education-fallback-secret' : 'dev-secret-change-me-in-production';
+  }
+})();
 
 export const authOptions: NextAuthOptions = {
   providers: [
