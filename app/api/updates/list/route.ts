@@ -43,12 +43,12 @@ export async function GET(request: NextRequest) {
       .limit(limit)
       .populate('createdBy', 'name email')
       .populate('courseId', 'title thumbnail')
-      .lean();
+      .lean() as any[];
 
     // Get read status for user
     const readUpdateIds = await UpdateRead.find({ userId: user._id })
       .select('updateId')
-      .lean();
+      .lean() as any[];
     const readIdsSet = new Set(readUpdateIds.map(r => r.updateId.toString()));
 
     // Mark updates as read/unread

@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       .skip(skip)
       .limit(limit)
       .populate('courseId', 'title thumbnail description')
-      .lean();
+      .lean() as any[];
 
     const total = await Certificate.countDocuments({ userId: user._id });
 

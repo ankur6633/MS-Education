@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useUser } from '@/components/providers/UserProvider'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -72,13 +72,7 @@ export default function UpdatesPage() {
   const [hasMore, setHasMore] = useState(true)
   const [isMarkingAllRead, setIsMarkingAllRead] = useState(false)
 
-  useEffect(() => {
-    if (user?.email) {
-      fetchUpdates()
-    }
-  }, [user, page])
-
-  const fetchUpdates = async () => {
+  const fetchUpdates = useCallback(async () => {
     if (!user?.email) return
 
     setIsLoading(true)
@@ -102,7 +96,13 @@ export default function UpdatesPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user?.email, page])
+
+  useEffect(() => {
+    if (user?.email) {
+      fetchUpdates()
+    }
+  }, [user, fetchUpdates])
 
   const markAsRead = async (updateId: string) => {
     if (!user?.email) return
@@ -206,7 +206,7 @@ export default function UpdatesPage() {
             <Bell className="h-16 w-16 text-neutral-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-neutral-800 mb-2">No Updates Yet</h3>
             <p className="text-neutral-600">
-              You're all caught up! Check back later for new updates.
+              You&apos;re all caught up! Check back later for new updates.
             </p>
           </CardContent>
         </Card>

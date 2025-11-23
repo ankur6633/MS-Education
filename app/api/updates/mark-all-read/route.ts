@@ -32,11 +32,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Get all update IDs
-    const allUpdates = await Update.find().select('_id').lean();
+    const allUpdates = await Update.find().select('_id').lean() as any[];
     const updateIds = allUpdates.map(u => u._id);
 
     // Get already read updates
-    const readUpdates = await UpdateRead.find({ userId: user._id }).select('updateId').lean();
+    const readUpdates = await UpdateRead.find({ userId: user._id }).select('updateId').lean() as any[];
     const readIdsSet = new Set(readUpdates.map(r => r.updateId.toString()));
 
     // Mark all unread updates as read
