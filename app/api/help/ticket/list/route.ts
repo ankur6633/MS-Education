@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .lean();
+      .lean() as any[];
 
     // Get reply counts for each ticket
     const ticketIds = tickets.map(t => t._id);

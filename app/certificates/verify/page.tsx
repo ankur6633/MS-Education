@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { CheckCircle2, XCircle, Download, Share2 } from 'lucide-react'
@@ -28,15 +28,7 @@ export default function VerifyCertificatePage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isValid, setIsValid] = useState(false)
 
-  useEffect(() => {
-    if (hash) {
-      verifyCertificate()
-    } else {
-      setIsLoading(false)
-    }
-  }, [hash])
-
-  const verifyCertificate = async () => {
+  const verifyCertificate = useCallback(async () => {
     if (!hash) return
 
     setIsLoading(true)
@@ -56,7 +48,15 @@ export default function VerifyCertificatePage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [hash])
+
+  useEffect(() => {
+    if (hash) {
+      verifyCertificate()
+    } else {
+      setIsLoading(false)
+    }
+  }, [hash, verifyCertificate])
 
   const handleDownload = () => {
     if (certificate) {
@@ -174,7 +174,7 @@ export default function VerifyCertificatePage() {
               ) : (
                 <div className="text-center py-8">
                   <p className="text-neutral-600 mb-4">
-                    The certificate you're looking for could not be found or verified.
+                    The certificate you&apos;re looking for could not be found or verified.
                   </p>
                   <p className="text-sm text-neutral-500">
                     Please check the verification link and try again.

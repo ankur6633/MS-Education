@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useUser } from '@/components/providers/UserProvider'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -47,19 +47,6 @@ export default function HelpCenterPage() {
     category: ''
   })
 
-  useEffect(() => {
-    fetchFAQs()
-    if (user?.email) {
-      fetchTickets()
-    }
-  }, [user])
-
-  useEffect(() => {
-    if (selectedTicket && user?.email) {
-      fetchTicketDetails(selectedTicket._id)
-    }
-  }, [selectedTicket, user])
-
   const fetchFAQs = async () => {
     try {
       const res = await fetch('/api/help/faq')
@@ -72,7 +59,7 @@ export default function HelpCenterPage() {
     }
   }
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     if (!user?.email) return
 
     setIsLoading(true)
@@ -88,9 +75,9 @@ export default function HelpCenterPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user?.email])
 
-  const fetchTicketDetails = async (ticketId: string) => {
+  const fetchTicketDetails = useCallback(async (ticketId: string) => {
     if (!user?.email) return
 
     try {
@@ -106,7 +93,20 @@ export default function HelpCenterPage() {
     } catch (error) {
       console.error('Error fetching ticket details:', error)
     }
-  }
+  }, [user?.email])
+
+  useEffect(() => {
+    fetchFAQs()
+    if (user?.email) {
+      fetchTickets()
+    }
+  }, [user, fetchTickets])
+
+  useEffect(() => {
+    if (selectedTicket && user?.email) {
+      fetchTicketDetails(selectedTicket._id)
+    }
+  }, [selectedTicket, user, fetchTicketDetails])
 
   const handleCreateTicket = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -476,7 +476,7 @@ export default function HelpCenterPage() {
           <Card>
             <CardHeader>
               <CardTitle>Create Support Ticket</CardTitle>
-              <CardDescription>Describe your issue and we'll help you resolve it</CardDescription>
+              <CardDescription>Describe your issue and we&apos;ll help you resolve it</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleCreateTicket} className="space-y-6">

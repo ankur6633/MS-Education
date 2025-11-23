@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useUser } from '@/components/providers/UserProvider'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -32,13 +32,7 @@ export default function AccomplishmentsPage() {
   const [page, setPage] = useState(1)
   const [hasMore, setHasMore] = useState(true)
 
-  useEffect(() => {
-    if (user?.email) {
-      fetchCertificates()
-    }
-  }, [user, page])
-
-  const fetchCertificates = async () => {
+  const fetchCertificates = useCallback(async () => {
     if (!user?.email) return
 
     setIsLoading(true)
@@ -62,7 +56,13 @@ export default function AccomplishmentsPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [user?.email, page])
+
+  useEffect(() => {
+    if (user?.email) {
+      fetchCertificates()
+    }
+  }, [user, fetchCertificates])
 
   const handleDownload = async (certificate: Certificate) => {
     try {

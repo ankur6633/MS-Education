@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useUser } from '@/components/providers/UserProvider'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -46,15 +46,7 @@ export default function SettingsPage() {
   })
   const [isSocialLoading, setIsSocialLoading] = useState(false)
 
-  // Load preferences and social on mount
-  useEffect(() => {
-    if (user?.email) {
-      fetchPreferences()
-      fetchSocial()
-    }
-  }, [user])
-
-  const fetchPreferences = async () => {
+  const fetchPreferences = useCallback(async () => {
     try {
       const res = await fetch(`/api/user/settings/preferences?email=${encodeURIComponent(user?.email || '')}`)
       const data = await res.json()
@@ -64,9 +56,9 @@ export default function SettingsPage() {
     } catch (error) {
       console.error('Error fetching preferences:', error)
     }
-  }
+  }, [user?.email])
 
-  const fetchSocial = async () => {
+  const fetchSocial = useCallback(async () => {
     try {
       const res = await fetch(`/api/user/settings/social?email=${encodeURIComponent(user?.email || '')}`)
       const data = await res.json()
@@ -76,7 +68,15 @@ export default function SettingsPage() {
     } catch (error) {
       console.error('Error fetching social:', error)
     }
-  }
+  }, [user?.email])
+
+  // Load preferences and social on mount
+  useEffect(() => {
+    if (user?.email) {
+      fetchPreferences()
+      fetchSocial()
+    }
+  }, [user, fetchPreferences, fetchSocial])
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault()

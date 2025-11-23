@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const certificate = await Certificate.findOne({ verificationHash: hash })
       .populate('userId', 'name email')
       .populate('courseId', 'title description')
-      .lean();
+      .lean() as any;
 
     if (!certificate) {
       return NextResponse.json({
@@ -33,12 +33,12 @@ export async function GET(request: NextRequest) {
         certificateUrl: certificate.certificateUrl,
         completedAt: certificate.completedAt,
         user: {
-          name: (certificate.userId as any).name,
-          email: (certificate.userId as any).email
+          name: certificate.userId?.name || '',
+          email: certificate.userId?.email || ''
         },
         course: {
-          title: (certificate.courseId as any).title,
-          description: (certificate.courseId as any).description
+          title: certificate.courseId?.title || '',
+          description: certificate.courseId?.description || ''
         }
       }
     });

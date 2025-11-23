@@ -853,7 +853,7 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                       </div>
                     )}
 
-                    <div className="mt-2 text-center text-sm text-neutral-500">Don't share your login details with anyone.</div>
+                    <div className="mt-2 text-center text-sm text-neutral-500">Don&apos;t share your login details with anyone.</div>
                   </section>
                 )}
 
