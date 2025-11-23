@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import connectDB from '@/lib/db';
+import dbConnect from '@/lib/db';
 import User from '@/lib/models/User';
 import { profileUpdateSchema } from '@/lib/validators/profileSchema';
 
@@ -35,7 +35,7 @@ async function getRequestEmail(request: NextRequest): Promise<string | null> {
 // GET /api/users/profile - fetch current user's profile
 export async function GET(request: NextRequest) {
 	try {
-		await connectDB();
+		await dbConnect();
 
 		const email = await getRequestEmail(request);
 		if (!email) {
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
 // PUT /api/users/profile - update current user's profile
 export async function PUT(request: NextRequest) {
 	try {
-		await connectDB();
+		await dbConnect();
 
 		const email = await getRequestEmail(request);
 		if (!email) {

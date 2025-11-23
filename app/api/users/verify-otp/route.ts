@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
+import dbConnect from '@/lib/db';
 import User from '@/lib/models/User';
 import otpService from '@/lib/otp-service';
 
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
+    await dbConnect();
     
     const { mobile, otp } = await request.json();
     

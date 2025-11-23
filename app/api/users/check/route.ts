@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
+import dbConnect from '@/lib/db';
 import User from '@/lib/models/User';
 
 export const dynamic = 'force-dynamic'; // Force dynamic rendering for this route
 
 export async function GET(request: NextRequest) {
   try {
-    await connectDB();
+    await dbConnect();
     
     const { searchParams } = new URL(request.url);
     const mobile = searchParams.get('mobile');

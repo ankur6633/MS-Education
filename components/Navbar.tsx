@@ -93,6 +93,14 @@ export function Navbar() {
     }
   }
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    // Limit to 50 characters
+    if (value.length <= 50) {
+      setSearchQuery(value)
+    }
+  }
+
   return (
     <>
     <motion.nav
@@ -126,7 +134,8 @@ export function Navbar() {
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={handleSearchChange}
+                  maxLength={50}
                   placeholder="What do you want to learn?"
                   className="w-64 px-4 py-2 pr-12 text-sm border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm"
                 />
@@ -270,7 +279,8 @@ export function Navbar() {
                   <input
                     type="text"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={handleSearchChange}
+                    maxLength={50}
                     placeholder="What do you want to learn?"
                     className="w-full px-4 py-3 pr-12 text-sm border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm"
                   />
@@ -394,14 +404,16 @@ export function Navbar() {
         </div>
       </div>
     )}
-    {/* Persistent Get Started Floating Button */}
-    <button
-      onClick={() => setIsLoginSidebarOpen(true)}
-      className="fixed bottom-6 right-6 z-[60] shadow-lg rounded-full px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium transition-colors"
-      aria-label="Get Started"
-    >
-      Get Started
-    </button>
+    {/* Persistent Get Started Floating Button - Only visible when user is not logged in */}
+    {!user && (
+      <button
+        onClick={() => setIsLoginSidebarOpen(true)}
+        className="fixed bottom-6 right-6 z-[60] shadow-lg rounded-full px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium transition-colors"
+        aria-label="Get Started"
+      >
+        Get Started
+      </button>
+    )}
     </>
   )
 }
