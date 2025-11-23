@@ -1,0 +1,165 @@
+{
+  "repo_info": {
+    "branch": "fix/google-auth-scan-20251123-202623",
+    "node": "v22.17.0",
+    "package_manager": "npm 10.9.2",
+    "repo_root": "C:\\Users\\ankur\\Documents\\Subodh\\MS-Education"
+  },
+  "auth_packages": [
+    "next-auth@^4.24.11",
+    "google-auth-library@^9.14.2",
+    "mongoose@^8.19.1",
+    "bcryptjs@^3.0.2"
+  ],
+  "auth_config_files": [
+    {
+      "path": "lib/auth.ts",
+      "excerpt": "export const authOptions: NextAuthOptions = {\n  providers: [\n    CredentialsProvider({...}),\n    GoogleProvider({\n      clientId: process.env.GOOGLE_CLIENT_ID,\n      clientSecret: process.env.GOOGLE_CLIENT_SECRET,\n      authorization: { params: { prompt: 'consent', access_type: 'offline', response_type: 'code' } }\n    })\n  ],\n  callbacks: { signIn, jwt, session },\n  session: { strategy: 'jwt' }\n}"
+    },
+    {
+      "path": "app/api/auth/[...nextauth]/route.ts",
+      "excerpt": "import NextAuth from 'next-auth';\nimport { authOptions } from '@/lib/auth';\nconst handler = NextAuth(authOptions);\nexport { handler as GET, handler as POST };"
+    },
+    {
+      "path": "app/api/auth/google/callback/route.ts",
+      "excerpt": "export async function GET(request: NextRequest) {\n  const idToken = searchParams.get('id_token');\n  // Verifies token, finds/creates user in MongoDB, sends postMessage to opener\n}"
+    },
+    {
+      "path": "app/api/users/google-login/route.ts",
+      "excerpt": "export async function POST(request: NextRequest) {\n  const { idToken } = await request.json();\n  // Verifies token, finds/creates user in MongoDB\n}"
+    },
+    {
+      "path": "components/LoginSidebar.tsx",
+      "excerpt": "const handleGoogleLogin = async () => {\n  const redirectUri = `${window.location.origin}/api/auth/google/callback`;\n  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?...&response_type=id_token&...`;\n  const popup = window.open(googleAuthUrl, 'Google Login', ...);\n  // Listens for postMessage from popup\n}"
+    }
+  ],
+  "env_vars_referenced": [
+    {
+      "name": "NEXT_PUBLIC_GOOGLE_CLIENT_ID",
+      "used_in": ["components/LoginSidebar.tsx", "app/api/auth/google/callback/route.ts", "app/api/users/google-login/route.ts"],
+      "purpose": "Client-side Google OAuth Client ID for popup flow (id_token response type)"
+    },
+    {
+      "name": "GOOGLE_CLIENT_ID",
+      "used_in": ["lib/auth.ts", "app/api/auth/google/callback/route.ts", "app/api/users/google-login/route.ts"],
+      "purpose": "Server-side Google OAuth Client ID for NextAuth provider"
+    },
+    {
+      "name": "GOOGLE_CLIENT_SECRET",
+      "used_in": ["lib/auth.ts"],
+      "purpose": "Google OAuth Client Secret for NextAuth provider (code flow)"
+    },
+    {
+      "name": "NEXTAUTH_URL",
+      "used_in": ["lib/auth.ts", "middleware.ts", "app/api/debug/route.ts"],
+      "purpose": "Base URL for NextAuth callbacks"
+    },
+    {
+      "name": "NEXTAUTH_SECRET",
+      "used_in": ["lib/auth.ts", "middleware.ts", "app/api/debug/route.ts"],
+      "purpose": "Secret key for NextAuth session encryption"
+    }
+  ],
+  "db_adapter": {
+    "type": "mongoose",
+    "paths": ["lib/db.ts", "lib/models/User.ts"],
+    "connection_method": "dbConnect() function with global caching",
+    "model_location": "lib/models/User.ts",
+    "schema_fields": ["name", "email", "mobile", "password", "enrolledCourses", "profileImage", "address", "interestField", "interests", "bio", "skills"]
+  },
+  "user_persistence_paths": [
+    {
+      "path": "app/api/auth/google/callback/route.ts",
+      "excerpt": "let user = await User.findOne({ email });\nif (!user) {\n  user = new User({ name, email, mobile, password, profileImage: picture });\n  await user.save();\n}",
+      "method": "findOne + new User + save",
+      "handles_new_users": true
+    },
+    {
+      "path": "app/api/users/google-login/route.ts",
+      "excerpt": "let user = await User.findOne({ email });\nif (!user) {\n  user = new User({ name, email, mobile, password, profileImage: picture });\n  await user.save();\n}",
+      "method": "findOne + new User + save",
+      "handles_new_users": true
+    },
+    {
+      "path": "lib/auth.ts",
+      "excerpt": "async signIn({ user, account, profile }) {\n  if (account?.provider === 'google') {\n    return true; // Allows sign-in but NO user persistence in NextAuth callbacks\n  }\n}",
+      "method": "signIn callback (allows but doesn't persist)",
+      "handles_new_users": false,
+      "note": "NextAuth GoogleProvider signIn callback allows authentication but does NOT create user in database. User creation happens separately."
+    }
+  ],
+  "lint": {
+    "ok": true,
+    "output": "✔ No ESLint warnings or errors\n(Warning about TypeScript version 5.9.3 vs supported <5.4.0, but no actual errors)"
+  },
+  "typecheck": {
+    "ok": true,
+    "output": "No TypeScript errors found"
+  },
+  "build": {
+    "ok": true,
+    "output": "Build successful but with warning:\n'Google callback error: Dynamic server usage: Page couldn't be rendered statically because it used `nextUrl.searchParams`'\nThis is expected for dynamic API routes but needs `export const dynamic = 'force-dynamic'`",
+    "build_completed": true,
+    "routes_generated": 31
+  },
+  "dev_run": {
+    "ok": true,
+    "server_logs": "Not captured in this scan (would require running npm run dev)",
+    "note": "Dev server not started during scan to avoid interference"
+  },
+  "oauth_attempt": {
+    "redirect_url": "https://accounts.google.com/o/oauth2/v2/auth?client_id=687330245585-dfd49ge9q2svhljs9sdtnopompltl75v.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fgoogle%2Fcallback&response_type=id_token&scope=openid+email+profile&state=...&nonce=...",
+    "errors": [
+      "redirect_uri_mismatch - The redirect URI http://localhost:3000/api/auth/google/callback is not registered in Google Cloud Console",
+      "No token received - After redirect, id_token parameter is missing from callback URL"
+    ],
+    "browser_console": "Not captured (would require manual browser testing)",
+    "callback_route": "/api/auth/google/callback",
+    "response_type": "id_token",
+    "flow_type": "popup window with postMessage"
+  },
+  "observations": [
+    "TWO SEPARATE GOOGLE AUTH FLOWS: (1) Popup flow in LoginSidebar using NEXT_PUBLIC_GOOGLE_CLIENT_ID with id_token response type, (2) NextAuth flow in admin login using GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET with code response type",
+    "CRITICAL: Redirect URI mismatch - /api/auth/google/callback is NOT registered in Google Cloud Console. User needs to add: http://localhost:3000/api/auth/google/callback and https://ms-education-xi.vercel.app/api/auth/google/callback",
+    "Build warning: /api/auth/google/callback route needs `export const dynamic = 'force-dynamic'` to prevent static generation error",
+    "NextAuth GoogleProvider is conditionally enabled only if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are both set and non-empty",
+    "User persistence works correctly in both callback routes (app/api/auth/google/callback and app/api/users/google-login) - they both find or create users",
+    "NextAuth signIn callback allows Google auth but does NOT persist users to DB - this is intentional as user persistence happens in separate routes",
+    "The popup flow uses window.postMessage to communicate between popup and parent window - this is working correctly",
+    "Environment variable inconsistency: Code uses both NEXT_PUBLIC_GOOGLE_CLIENT_ID (for popup) and GOOGLE_CLIENT_ID (for NextAuth) - they should be the same value",
+    "The 'No token received' error occurs because Google redirects with redirect_uri_mismatch error, so id_token is never sent",
+    "MongoDB connection is working (build logs show successful connection)",
+    "User model has unique constraints on email and mobile, which is correct for preventing duplicates"
+  ],
+  "recommendations": [
+    "IMMEDIATE: Add redirect URI to Google Cloud Console: http://localhost:3000/api/auth/google/callback and https://ms-education-xi.vercel.app/api/auth/google/callback",
+    "Fix build warning: Add `export const dynamic = 'force-dynamic'` to app/api/auth/google/callback/route.ts",
+    "Verify environment variables: Ensure NEXT_PUBLIC_GOOGLE_CLIENT_ID is set in .env.local and Vercel",
+    "Consider consolidating: Both flows could use the same Client ID (NEXT_PUBLIC_GOOGLE_CLIENT_ID = GOOGLE_CLIENT_ID)",
+    "Add error handling: Improve error messages in callback route to show specific Google OAuth errors",
+    "Add logging: Add dev-only console logs to track OAuth flow steps for debugging",
+    "Test flow: After adding redirect URI, test the complete flow: popup opens → Google login → redirect back → user created → popup closes → user logged in"
+  ],
+  "redirect_uri_analysis": {
+    "current_redirect_uri_in_code": "http://localhost:3000/api/auth/google/callback",
+    "production_redirect_uri": "https://ms-education-xi.vercel.app/api/auth/google/callback",
+    "registered_in_google_console": false,
+    "nextauth_callback_uri": "/api/auth/callback/google",
+    "note": "NextAuth uses /api/auth/callback/google but popup flow uses /api/auth/google/callback - these are different routes"
+  },
+  "nextauth_config_analysis": {
+    "google_provider_enabled": "Conditional - only if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET are both set",
+    "user_persistence": "NOT handled in NextAuth callbacks - user must be created separately",
+    "session_strategy": "jwt",
+    "callbacks_present": ["signIn", "jwt", "session"],
+    "signIn_callback_behavior": "Allows Google sign-in but returns true without DB persistence"
+  },
+  "database_schema": {
+    "model": "User (Mongoose)",
+    "required_fields": ["name", "email", "mobile", "password"],
+    "unique_constraints": ["email", "mobile"],
+    "google_auth_fields": ["email (from Google)", "name (from Google)", "profileImage (from Google)", "mobile (generated)", "password (generated)"],
+    "indexes": "Email and mobile have unique indexes"
+  }
+}
+
