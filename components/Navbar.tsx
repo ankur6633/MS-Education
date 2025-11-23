@@ -394,14 +394,16 @@ export function Navbar() {
         </div>
       </div>
     )}
-    {/* Persistent Get Started Floating Button */}
-    <button
-      onClick={() => setIsLoginSidebarOpen(true)}
-      className="fixed bottom-6 right-6 z-[60] shadow-lg rounded-full px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium transition-colors"
-      aria-label="Get Started"
-    >
-      Get Started
-    </button>
+    {/* Persistent Get Started Floating Button - Only visible when user is not logged in */}
+    {!user && (
+      <button
+        onClick={() => setIsLoginSidebarOpen(true)}
+        className="fixed bottom-6 right-6 z-[60] shadow-lg rounded-full px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium transition-colors"
+        aria-label="Get Started"
+      >
+        Get Started
+      </button>
+    )}
     </>
   )
 }
