@@ -434,6 +434,9 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
       sessionStorage.setItem('google_oauth_redirect', window.location.href)
 
       // Build Google OAuth URL - using id_token flow for popup
+      // Note: id_token response type uses hash fragments (#), not query parameters (?)
+      // Hash fragments are only accessible to client-side JavaScript, so the callback route
+      // returns an HTML page with JavaScript to read the hash and process the token
       const redirectUri = `${window.location.origin}/api/auth/google/callback`
       const scope = 'openid email profile'
       const responseType = 'id_token'
@@ -465,14 +468,29 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
 
       // Listen for the callback message from the popup
       const messageListener = (event: MessageEvent) => {
+        // Log for debugging
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Message received from popup:', {
+            origin: event.origin,
+            expectedOrigin: window.location.origin,
+            type: event.data?.type,
+            data: event.data
+          });
+        }
+
         // Verify origin for security
         if (event.origin !== window.location.origin) {
+          if (process.env.NODE_ENV === 'development') {
+            console.warn('Message origin mismatch:', event.origin, 'expected:', window.location.origin);
+          }
           return
         }
 
         if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
           window.removeEventListener('message', messageListener)
-          popup.close()
+          if (popup && !popup.closed) {
+            popup.close()
+          }
           
           const { user, isNewUser } = event.data
           login(user)
@@ -486,8 +504,12 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
           setTimeout(() => onClose(), 1500)
         } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
           window.removeEventListener('message', messageListener)
-          popup.close()
-          setMessage({ type: 'error', text: event.data.error || 'Google authentication failed' })
+          if (popup && !popup.closed) {
+            popup.close()
+          }
+          const errorMsg = event.data.error || 'Google authentication failed'
+          console.error('Google auth error:', errorMsg)
+          setMessage({ type: 'error', text: errorMsg })
           setIsLoading(false)
         }
       }
