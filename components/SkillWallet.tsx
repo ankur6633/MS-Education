@@ -5,6 +5,7 @@ import { Star, Clock, Users, Award, CheckCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useUser } from '@/components/providers/UserProvider'
 
 interface Course {
   _id: string;
@@ -30,6 +31,8 @@ interface Course {
 export function SkillWallet() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [enrolledCourseIds, setEnrolledCourseIds] = useState<string[]>([]);
+  const { user } = useUser();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -48,6 +51,29 @@ export function SkillWallet() {
 
     fetchCourses();
   }, []);
+
+  // Fetch enrolled courses if user is logged in
+  useEffect(() => {
+    const fetchEnrolledCourses = async () => {
+      if (!user?.email) {
+        setEnrolledCourseIds([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/users/enrolled-courses?email=${encodeURIComponent(user.email)}`);
+        if (response.ok) {
+          const data = await response.json();
+          const enrolledIds = (data.courses || []).map((course: Course) => course._id);
+          setEnrolledCourseIds(enrolledIds);
+        }
+      } catch (error) {
+        console.error('Error fetching enrolled courses:', error);
+      }
+    };
+
+    fetchEnrolledCourses();
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -106,7 +132,14 @@ export function SkillWallet() {
             >
               {/* Course Image/Thumbnail */}
               <div className="relative h-36 bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center overflow-hidden">
-                {/* Badge */}
+                {/* Enrolled Badge */}
+                {enrolledCourseIds.includes(course._id) && (
+                  <div className="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 flex items-center space-x-1">
+                    <CheckCircle className="w-3 h-3" />
+                    <span>Enrolled</span>
+                  </div>
+                )}
+                {/* Course Badge */}
                 <div className={`absolute top-3 right-3 ${course.badgeColor || 'bg-gray-500'} text-white px-2 py-1 rounded-full text-xs font-bold z-10`}>
                   {course.badge || 'NEW'}
                 </div>
@@ -225,11 +258,20 @@ export function SkillWallet() {
                 </div>
 
                 {/* CTA Button */}
-                <Link href={`/courses/${course._id}`}>
-                  <button className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold py-2.5 rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 transform group-hover:scale-105 mt-auto">
-                    Enroll Now
-                  </button>
-                </Link>
+                {enrolledCourseIds.includes(course._id) ? (
+                  <Link href={`/courses/${course._id}`}>
+                    <button className="w-full bg-green-500 text-white font-semibold py-2.5 rounded-lg hover:bg-green-600 transition-all duration-300 flex items-center justify-center space-x-2 mt-auto">
+                      <CheckCircle className="w-4 h-4" />
+                      <span>Enrolled</span>
+                    </button>
+                  </Link>
+                ) : (
+                  <Link href={`/courses/${course._id}`}>
+                    <button className="w-full bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold py-2.5 rounded-lg hover:from-primary-600 hover:to-secondary-600 transition-all duration-300 transform group-hover:scale-105 mt-auto">
+                      Enroll Now
+                    </button>
+                  </Link>
+                )}
               </div>
             </motion.div>
           ))}

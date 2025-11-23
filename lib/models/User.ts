@@ -13,6 +13,12 @@ export interface IUser extends Document {
   interests?: string[];
   bio?: string;
   skills?: string[];
+  // Preferences
+  notificationsEnabled?: boolean;
+  theme?: string;
+  language?: string;
+  googleConnected?: boolean;
+  googleId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -84,6 +90,34 @@ const UserSchema = new Schema<IUser>({
     type: [String],
     required: false,
     default: []
+  },
+  // Preferences
+  notificationsEnabled: {
+    type: Boolean,
+    required: false,
+    default: true
+  },
+  theme: {
+    type: String,
+    required: false,
+    default: 'light',
+    enum: ['light', 'dark', 'auto']
+  },
+  language: {
+    type: String,
+    required: false,
+    default: 'en',
+    maxlength: 10
+  },
+  googleConnected: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  googleId: {
+    type: String,
+    required: false,
+    trim: true
   },
   createdAt: { 
     type: Date, 

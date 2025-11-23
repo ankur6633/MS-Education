@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import dbConnect from '@/lib/db';
 import Course from '@/lib/models/Course';
+import Update from '@/lib/models/Update';
+import User from '@/lib/models/User';
 
 // GET /api/courses - Get all courses
 export async function GET(request: NextRequest) {
@@ -122,6 +124,36 @@ export async function POST(request: NextRequest) {
     });
 
     await course.save();
+
+    // Create update entry for new course
+    try {
+      // Try to find admin user, or create a system user reference
+      let adminUser = await User.findOne({ email: session.user.email });
+      if (!adminUser) {
+        // If admin doesn't exist in User collection, create a system reference
+        // For now, we'll use the first user or create a placeholder
+        adminUser = await User.findOne() || await User.create({
+          name: 'System Admin',
+          email: session.user.email || 'admin@mseducation.com',
+          mobile: '0000000000',
+          password: 'system'
+        });
+      }
+      if (adminUser) {
+        await Update.create({
+          title: `New Course: ${title}`,
+          description: `A new course "${title}" has been added. ${description.substring(0, 200)}${description.length > 200 ? '...' : ''}`,
+          type: 'course_added',
+          createdBy: adminUser._id,
+          courseId: course._id,
+          image: thumbnail,
+          redirectUrl: `/courses/${course._id}`
+        });
+      }
+    } catch (updateError) {
+      console.error('Error creating update entry:', updateError);
+      // Don't fail the course creation if update creation fails
+    }
 
     return NextResponse.json(course, { status: 201 });
   } catch (error) {
