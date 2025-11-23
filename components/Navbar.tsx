@@ -203,22 +203,22 @@ export function Navbar() {
                           <ShoppingBag className="h-4 w-4" />
                           <span>My Purchases</span>
                         </Link>
-                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                        <Link href="/dashboard/settings" className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                           <Settings className="h-4 w-4" />
                           <span>Settings</span>
-                        </button>
-                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                        </Link>
+                        <Link href="/dashboard/updates" className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                           <Bell className="h-4 w-4" />
                           <span>Updates</span>
-                        </button>
-                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                        </Link>
+                        <Link href="/dashboard/accomplishments" className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                           <Trophy className="h-4 w-4" />
                           <span>Accomplishments</span>
-                        </button>
-                        <button className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
+                        </Link>
+                        <Link href="/dashboard/help-center" className="w-full flex items-center space-x-3 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors">
                           <HelpCircle className="h-4 w-4" />
                           <span>Help Center</span>
-                        </button>
+                        </Link>
                       </div>
                       
                       {/* Separator */}
@@ -316,26 +316,46 @@ export function Navbar() {
                       <User className="h-4 w-4" />
                       <span>Profile</span>
                     </Link>
-                    <Link href="/my-purchases" className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                    <Link 
+                      href="/my-purchases" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                    >
                       <ShoppingBag className="h-4 w-4" />
                       <span>My Purchases</span>
                     </Link>
-                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                    <Link 
+                      href="/dashboard/settings" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                    >
                       <Settings className="h-4 w-4" />
                       <span>Settings</span>
-                    </button>
-                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                    </Link>
+                    <Link 
+                      href="/dashboard/updates" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                    >
                       <Bell className="h-4 w-4" />
                       <span>Updates</span>
-                    </button>
-                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                    </Link>
+                    <Link 
+                      href="/dashboard/accomplishments" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                    >
                       <Trophy className="h-4 w-4" />
                       <span>Accomplishments</span>
-                    </button>
-                    <button className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors">
+                    </Link>
+                    <Link 
+                      href="/dashboard/help-center" 
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full flex items-center space-x-3 px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-lg transition-colors"
+                    >
                       <HelpCircle className="h-4 w-4" />
                       <span>Help Center</span>
-                    </button>
+                    </Link>
                   </div>
                   
                   {/* Premium Section removed */}

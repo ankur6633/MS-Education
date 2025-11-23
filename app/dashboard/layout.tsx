@@ -7,7 +7,7 @@ import { Footer } from '@/components/Footer'
 import { DashboardSidebar } from '@/components/DashboardSidebar'
 import { useUser } from '@/components/providers/UserProvider'
 
-export default function MyPurchasesLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
@@ -50,5 +50,4 @@ export default function MyPurchasesLayout({
     </>
   )
 }
-
 

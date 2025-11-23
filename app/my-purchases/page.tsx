@@ -148,61 +148,40 @@ export default function MyPurchasesPage() {
   }, [searchTerm, courses]);
 
   if (!user) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 pt-32">
-        <div className="container-custom py-20">
-          <div className="text-center">
-            <ShoppingBag className="h-16 w-16 text-neutral-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-neutral-800 mb-2">Login Required</h1>
-            <p className="text-neutral-600 mb-6">Please login to view your purchased courses</p>
-            <Link href="/#login">
-              <Button>Login to Continue</Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 pt-32">
-        <div className="container-custom py-20">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500 mx-auto"></div>
-            <p className="mt-4 text-neutral-600">Loading your courses...</p>
-          </div>
-        </div>
+      <div className="text-center py-20">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500 mx-auto"></div>
+        <p className="mt-4 text-neutral-600">Loading your courses...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100 pt-32">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-neutral-200">
-        <div className="container-custom py-8 md:py-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center"
-          >
-            <div className="flex items-center justify-center mb-4">
-              <ShoppingBag className="h-8 w-8 text-primary-500 mr-3" />
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-800">
-                My Purchases
-              </h1>
-            </div>
-            <p className="text-sm md:text-base text-neutral-600 max-w-2xl mx-auto">
-              All your enrolled courses in one place
-            </p>
-          </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center space-x-3"
+      >
+        <ShoppingBag className="h-8 w-8 text-primary-500" />
+        <div>
+          <h1 className="text-3xl font-bold text-neutral-800">
+            My Purchases
+          </h1>
+          <p className="text-neutral-600 mt-1">
+            All your enrolled courses in one place
+          </p>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="container-custom py-8">
+      <div>
         {/* Search Bar and Refresh Button */}
-        <div className="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="relative max-w-md w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
             <Input

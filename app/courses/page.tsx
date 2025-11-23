@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Search, Filter, Star, Clock, Users, ArrowRight, X } from 'lucide-react'
+import { Search, Filter, Star, Clock, Users, ArrowRight, X, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Select } from '@/components/ui/Select'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useUser } from '@/components/providers/UserProvider'
 
 interface Course {
   _id: string;
@@ -39,6 +40,8 @@ export default function CoursesPage() {
   const [selectedPrice, setSelectedPrice] = useState('all');
   const [selectedRating, setSelectedRating] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [enrolledCourseIds, setEnrolledCourseIds] = useState<string[]>([]);
+  const { user } = useUser();
 
   // Fetch courses and handle URL search parameter
   useEffect(() => {
@@ -129,6 +132,29 @@ export default function CoursesPage() {
 
     setFilteredCourses(filtered);
   }, [courses, searchTerm, selectedCategory, selectedPrice, selectedRating]);
+
+  // Fetch enrolled courses if user is logged in
+  useEffect(() => {
+    const fetchEnrolledCourses = async () => {
+      if (!user?.email) {
+        setEnrolledCourseIds([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/users/enrolled-courses?email=${encodeURIComponent(user.email)}`);
+        if (response.ok) {
+          const data = await response.json();
+          const enrolledIds = (data.courses || []).map((course: Course) => course._id);
+          setEnrolledCourseIds(enrolledIds);
+        }
+      } catch (error) {
+        console.error('Error fetching enrolled courses:', error);
+      }
+    };
+
+    fetchEnrolledCourses();
+  }, [user]);
 
   const clearFilters = () => {
     setSearchTerm('');
@@ -283,7 +309,14 @@ export default function CoursesPage() {
                   >
                     {/* Course Thumbnail */}
                     <div className="relative h-48 bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center overflow-hidden">
-                      {/* Badge */}
+                      {/* Enrolled Badge */}
+                      {enrolledCourseIds.includes(course._id) && (
+                        <div className="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold z-10 flex items-center space-x-1">
+                          <CheckCircle className="w-3 h-3" />
+                          <span>Enrolled</span>
+                        </div>
+                      )}
+                      {/* Course Badge */}
                       <div className={`absolute top-3 right-3 ${course.badgeColor || 'bg-gray-500'} text-white px-2 py-1 rounded-full text-xs font-bold z-10`}>
                         {course.badge || 'NEW'}
                       </div>
@@ -402,12 +435,22 @@ export default function CoursesPage() {
                       </div>
 
                       {/* CTA Button */}
-                      <Link href={`/courses/${course._id}`}>
-                        <Button className="w-full group">
-                          View Course
-                          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                        </Button>
-                      </Link>
+                      {enrolledCourseIds.includes(course._id) ? (
+                        <Link href={`/courses/${course._id}`}>
+                          <Button className="w-full bg-green-500 hover:bg-green-600 text-white group">
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Enrolled
+                            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link href={`/courses/${course._id}`}>
+                          <Button className="w-full group">
+                            View Course
+                            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                          </Button>
+                        </Link>
+                      )}
                     </div>
                   </motion.div>
                 ))}

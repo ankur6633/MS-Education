@@ -61,29 +61,25 @@ export default function ProfilePage() {
 	}
 
 	return (
-		<div className="min-h-screen bg-gray-50">
-			<main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-				
+		<div className="space-y-6">
+			{mode === 'view' && profile && (
+				<ProfileView
+					user={profile}
+					onEdit={() => setMode('edit')}
+				/>
+			)}
 
-				{mode === 'view' && profile && (
-					<ProfileView
-						user={profile}
-						onEdit={() => setMode('edit')}
-					/>
-				)}
-
-				{mode === 'edit' && profile && (
-					<ProfileEditForm
-						initialUser={profile}
-						onCancel={() => setMode('view')}
-						onSaved={async (updated) => {
-							// Re-fetch canonical DB state after save to avoid stale client state
-							await fetchAndSetProfile(updated.email || currentEmail)
-							setMode('view')
-						}}
-					/>
-				)}
-			</main>
+			{mode === 'edit' && profile && (
+				<ProfileEditForm
+					initialUser={profile}
+					onCancel={() => setMode('view')}
+					onSaved={async (updated) => {
+						// Re-fetch canonical DB state after save to avoid stale client state
+						await fetchAndSetProfile(updated.email || currentEmail)
+						setMode('view')
+					}}
+				/>
+			)}
 		</div>
 	)
 }
