@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import connectDB from '@/lib/db'
+import dbConnect from '@/lib/db'
 import Course from '@/lib/models/Course'
 
 // GET /api/courses/[id] - Get a single course
@@ -10,7 +10,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    await connectDB()
+    await dbConnect()
     
     const course = await Course.findById(params.id)
     
@@ -56,7 +56,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    await connectDB()
+    await dbConnect()
 
     const body = await request.json()
     const { 
@@ -137,7 +137,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    await connectDB()
+    await dbConnect()
 
     const course = await Course.findByIdAndDelete(params.id)
     

@@ -31,6 +31,7 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
   const [isLoading, setIsLoading] = useState(false)
 	type MessageType = 'success' | 'error' | 'info'
 	const [message, setMessage] = useState<{ type: MessageType; text: string } | null>(null)
+  const [isGoogleAvailable, setIsGoogleAvailable] = useState(false)
   const [newUserData, setNewUserData] = useState({
     name: '',
     email: '',
@@ -44,12 +45,57 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
   const { login } = useUser()
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   const formatMobile = (value: string) => {
     if (!value) return ''
     const digits = value.replace(/\D/g, '')
     if (digits.length !== 10) return value
     return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`
+  }
+
+  // Validation functions
+  const validateEmail = (email: string): string | null => {
+    if (!email.trim()) return 'Email is required'
+    if (email.length > 100) return 'Email must be less than 100 characters'
+    if (!emailPattern.test(email.toLowerCase())) return 'Please enter a valid email address'
+    return null
+  }
+
+  const validateMobile = (mobile: string): string | null => {
+    const digits = mobile.replace(/\D/g, '')
+    if (!digits) return 'Mobile number is required'
+    if (digits.length !== 10) return 'Mobile number must be exactly 10 digits'
+    return null
+  }
+
+  const validateName = (name: string): string | null => {
+    if (!name.trim()) return 'Name is required'
+    if (name.trim().length < 2) return 'Name must be at least 2 characters'
+    if (name.length > 100) return 'Name must be less than 100 characters'
+    if (!/^[a-zA-Z\s'-]+$/.test(name.trim())) return 'Name can only contain letters, spaces, hyphens, and apostrophes'
+    return null
+  }
+
+  const validatePassword = (password: string): string | null => {
+    if (!password) return 'Password is required'
+    if (password.length < 8) return 'Password must be at least 8 characters'
+    if (password.length > 128) return 'Password must be less than 128 characters'
+    if (!/(?=.*[a-z])/.test(password)) return 'Password must contain at least one lowercase letter'
+    if (!/(?=.*[A-Z])/.test(password)) return 'Password must contain at least one uppercase letter'
+    if (!/(?=.*\d)/.test(password)) return 'Password must contain at least one number'
+    return null
+  }
+
+  const validateIdentifier = (identifier: string): string | null => {
+    if (!identifier.trim()) return 'Email or phone number is required'
+    if (identifier.length > 100) return 'Input must be less than 100 characters'
+    const trimmed = identifier.trim()
+    const isEmail = emailPattern.test(trimmed.toLowerCase())
+    const digits = trimmed.replace(/\D/g, '')
+    const isMobile = digits.length === 10
+    if (!isEmail && !isMobile) return 'Enter a valid email or 10-digit phone number'
+    return null
   }
 
   const parseIdentifierInput = (value: string) => {
@@ -66,6 +112,14 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
   }
 
   const handleIdentify = async () => {
+    setFieldErrors({})
+    const identifierError = validateIdentifier(identifierInput)
+    if (identifierError) {
+      setFieldErrors({ identifier: identifierError })
+      setMessage({ type: 'error', text: identifierError })
+      return
+    }
+
     const parsed = parseIdentifierInput(identifierInput)
     if (!parsed) {
       setMessage({ type: 'error', text: 'Enter a valid email or 10-digit phone number' })
@@ -116,8 +170,11 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
 
   // STEP 1: Send Email OTP
   const sendEmailOTP = async () => {
-    if (!email) {
-      setMessage({ type: 'error', text: 'Please enter a valid email' })
+    setFieldErrors({})
+    const emailError = validateEmail(email)
+    if (emailError) {
+      setFieldErrors({ email: emailError })
+      setMessage({ type: 'error', text: emailError })
       return
     }
     setIsLoading(true)
@@ -171,9 +228,19 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
 
   // Login using email or phone + password
   const handleLogin = async () => {
-    if (!loginIdentifier?.value || !password) {
+    setFieldErrors({})
+    if (!loginIdentifier?.value) {
+      setActiveTab('identify')
+      return
+    }
+    if (!password) {
+      setFieldErrors({ password: 'Password is required' })
       setMessage({ type: 'error', text: 'Please enter your password' })
-      if (!loginIdentifier) setActiveTab('identify')
+      return
+    }
+    if (password.length > 128) {
+      setFieldErrors({ password: 'Password must be less than 128 characters' })
+      setMessage({ type: 'error', text: 'Password is too long' })
       return
     }
 
@@ -208,12 +275,30 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
 
   // STEP 3: Create Account after OTP verification
   const handleRegister = async () => {
-    if (!newUserData.name || !newUserData.email || !newUserData.password || !newUserData.mobile || newUserData.mobile.length !== 10) {
-      setMessage({ type: 'error', text: 'All fields are required and mobile must be 10 digits' })
-      return
+    setFieldErrors({})
+    const errors: Record<string, string> = {}
+
+    const nameError = validateName(newUserData.name)
+    if (nameError) errors.name = nameError
+
+    const emailError = validateEmail(newUserData.email)
+    if (emailError) errors.email = emailError
+
+    const mobileError = validateMobile(newUserData.mobile)
+    if (mobileError) errors.mobile = mobileError
+
+    const passwordError = validatePassword(newUserData.password)
+    if (passwordError) errors.password = passwordError
+
+    if (!confirmPassword) {
+      errors.confirmPassword = 'Please confirm your password'
+    } else if (confirmPassword !== newUserData.password) {
+      errors.confirmPassword = 'Passwords do not match'
     }
-    if (!confirmPassword || confirmPassword !== newUserData.password) {
-      setMessage({ type: 'error', text: 'Passwords do not match' })
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
+      setMessage({ type: 'error', text: 'Please fix the errors below' })
       return
     }
 
@@ -248,8 +333,11 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
 
   // Forgot Password - send OTP
   const sendForgotOTP = async () => {
-    if (!resetEmail) {
-      setMessage({ type: 'error', text: 'Please enter a valid email' })
+    setFieldErrors({})
+    const emailError = validateEmail(resetEmail)
+    if (emailError) {
+      setFieldErrors({ resetEmail: emailError })
+      setMessage({ type: 'error', text: emailError })
       return
     }
     setIsLoading(true)
@@ -275,12 +363,25 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
 
   // Forgot Password - reset
   const handleResetPassword = async () => {
-    if (!otp || otp.length !== 6 || !newPassword) {
-      setMessage({ type: 'error', text: 'Enter OTP and new password' })
-      return
+    setFieldErrors({})
+    const errors: Record<string, string> = {}
+
+    if (!otp || otp.length !== 6) {
+      errors.otp = 'Enter the 6-digit OTP'
     }
-    if (newPassword !== confirmResetPassword) {
-      setMessage({ type: 'error', text: 'Passwords do not match' })
+
+    const passwordError = validatePassword(newPassword)
+    if (passwordError) errors.newPassword = passwordError
+
+    if (!confirmResetPassword) {
+      errors.confirmResetPassword = 'Please confirm your password'
+    } else if (newPassword !== confirmResetPassword) {
+      errors.confirmResetPassword = 'Passwords do not match'
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
+      setMessage({ type: 'error', text: 'Please fix the errors below' })
       return
     }
     setIsLoading(true)
@@ -309,69 +410,118 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
     }
   }
 
-  // Google login (GIS)
+  // Google login - Opens Google OAuth in a popup window
   const handleGoogleLogin = async () => {
-    try {
-      // Load Google Identity Services script if not loaded
-      if (!(window as any).google) {
-        await new Promise<void>((resolve, reject) => {
-          const script = document.createElement('script')
-          script.src = 'https://accounts.google.com/gsi/client'
-          script.async = true
-          script.defer = true
-          script.onload = () => resolve()
-          script.onerror = () => reject(new Error('Failed to load Google SDK'))
-          document.head.appendChild(script)
-        })
-      }
+    // Don't proceed if Google is not available
+    if (!isGoogleAvailable) {
+      return
+    }
 
+    try {
+      // Get client ID
       const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string
-      if (!clientId) {
-        setMessage({ type: 'error', text: 'Google client not configured' })
+      
+      if (!clientId || clientId.trim() === '' || clientId === 'your-google-oauth-client-id') {
         return
       }
 
       setIsLoading(true)
       setMessage(null)
 
-      await new Promise<void>((resolve) => {
-        ;(window as any).google.accounts.id.initialize({
-          client_id: clientId,
-          callback: async (response: any) => {
-            try {
-              const idToken = response.credential
-              if (!idToken) {
-                setMessage({ type: 'error', text: 'Google login failed' })
-                return resolve()
-              }
-              const res = await fetch('/api/users/google-login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idToken }),
-              })
-              const data = await res.json()
-              if (!res.ok || !data?.success) {
-                setMessage({ type: 'error', text: data?.error || 'Google login failed' })
-              } else {
-                login(data.user)
-                setMessage({ type: 'success', text: `Welcome, ${data.user.name}!` })
-                setTimeout(() => onClose(), 1000)
-              }
-            } catch (e: any) {
-              setMessage({ type: 'error', text: e?.message || 'Google login failed' })
-            } finally {
-              resolve()
-            }
-          },
-        })
-        ;(window as any).google.accounts.id.prompt(() => {})
-      })
+      // Generate a random state for security
+      const state = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+      sessionStorage.setItem('google_oauth_state', state)
+      sessionStorage.setItem('google_oauth_redirect', window.location.href)
+
+      // Build Google OAuth URL - using id_token flow for popup
+      const redirectUri = `${window.location.origin}/api/auth/google/callback`
+      const scope = 'openid email profile'
+      const responseType = 'id_token'
+      const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `client_id=${encodeURIComponent(clientId)}&` +
+        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+        `response_type=${responseType}&` +
+        `scope=${encodeURIComponent(scope)}&` +
+        `state=${encodeURIComponent(state)}&` +
+        `nonce=${encodeURIComponent(state)}`
+
+      // Open Google OAuth in a popup window
+      const width = 500
+      const height = 600
+      const left = (window.screen.width - width) / 2
+      const top = (window.screen.height - height) / 2
+
+      const popup = window.open(
+        googleAuthUrl,
+        'Google Login',
+        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+      )
+
+      if (!popup) {
+        setIsLoading(false)
+        setMessage({ type: 'error', text: 'Please allow popups to sign in with Google' })
+        return
+      }
+
+      // Listen for the callback message from the popup
+      const messageListener = (event: MessageEvent) => {
+        // Verify origin for security
+        if (event.origin !== window.location.origin) {
+          return
+        }
+
+        if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
+          window.removeEventListener('message', messageListener)
+          popup.close()
+          
+          const { user, isNewUser } = event.data
+          login(user)
+          setMessage({ 
+            type: 'success', 
+            text: isNewUser 
+              ? `Welcome to MS Education, ${user.name}! Your account has been created.` 
+              : `Welcome back, ${user.name}!` 
+          })
+          setIsLoading(false)
+          setTimeout(() => onClose(), 1500)
+        } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
+          window.removeEventListener('message', messageListener)
+          popup.close()
+          setMessage({ type: 'error', text: event.data.error || 'Google authentication failed' })
+          setIsLoading(false)
+        }
+      }
+
+      window.addEventListener('message', messageListener)
+
+      // Check if popup is closed manually
+      const checkClosed = setInterval(() => {
+        if (popup.closed) {
+          clearInterval(checkClosed)
+          window.removeEventListener('message', messageListener)
+          setIsLoading(false)
+        }
+      }, 500)
+
     } catch (e: any) {
-      setMessage({ type: 'error', text: e?.message || 'Failed to initialize Google login' })
-    } finally {
+      setMessage({ type: 'error', text: e?.message || 'Failed to open Google login' })
       setIsLoading(false)
     }
   }
+
+  // Check if Google Client ID is available - check on mount and when sidebar opens
+  useEffect(() => {
+    // Check environment variable - NEXT_PUBLIC_ vars are available at build time
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
+    const isAvailable = !!(
+      clientId && 
+      typeof clientId === 'string' &&
+      clientId.trim() !== '' && 
+      clientId !== 'your-google-oauth-client-id' &&
+      !clientId.startsWith('your-')
+    )
+    setIsGoogleAvailable(isAvailable)
+  }, [isOpen])
 
   // Reset form when sidebar closes
   useEffect(() => {
@@ -388,6 +538,7 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
       setConfirmPassword('')
       setConfirmResetPassword('')
       setActiveTab('identify')
+      setFieldErrors({})
     }
   }, [isOpen])
 
@@ -457,11 +608,28 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                           Email or Phone
                         </label>
                         <Input
+                          type="text"
                           value={identifierInput}
-                          onChange={(e) => setIdentifierInput(e.target.value)}
+                          onChange={(e) => {
+                            const value = e.target.value
+                            if (value.length <= 100) {
+                              setIdentifierInput(value)
+                              if (fieldErrors.identifier) {
+                                setFieldErrors(prev => {
+                                  const newErrors = { ...prev }
+                                  delete newErrors.identifier
+                                  return newErrors
+                                })
+                              }
+                            }
+                          }}
                           placeholder="you@example.com or 9876543210"
-                          className="w-full"
+                          maxLength={100}
+                          className={`w-full ${fieldErrors.identifier ? 'border-red-500 focus:ring-red-500' : ''}`}
                         />
+                        {fieldErrors.identifier && (
+                          <p className="mt-1 text-sm text-red-600">{fieldErrors.identifier}</p>
+                        )}
                       </div>
                       <Button
                         onClick={handleIdentify}
@@ -471,6 +639,8 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                         {isLoading ? 'Checking...' : 'Continue'}
                       </Button>
                     </div>
+                    {isGoogleAvailable && (
+                      <>
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t border-neutral-200" />
@@ -483,8 +653,18 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                       onClick={handleGoogleLogin}
                       variant="outline"
                       disabled={isLoading}
-                      className="w-full"
-                    >
+                          className="w-full hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isLoading ? (
+                            <span className="flex items-center">
+                              <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                              </svg>
+                              Connecting...
+                            </span>
+                          ) : (
+                            <>
                       <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -492,7 +672,11 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                         <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                       </svg>
                       Continue with Google
+                            </>
+                          )}
                     </Button>
+                      </>
+                    )}
                     <div className="text-center text-sm text-neutral-500">
                       Don&#39;t share your login details with anyone.
                     </div>
@@ -552,9 +736,22 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                           <Input
                             type={showPassword ? 'text' : 'password'}
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e) => {
+                              const value = e.target.value
+                              if (value.length <= 128) {
+                                setPassword(value)
+                                if (fieldErrors.password) {
+                                  setFieldErrors(prev => {
+                                    const newErrors = { ...prev }
+                                    delete newErrors.password
+                                    return newErrors
+                                  })
+                                }
+                              }
+                            }}
                             placeholder="Enter your password"
-                            className="w-full pr-10"
+                            maxLength={128}
+                            className={`w-full pr-10 ${fieldErrors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
                           />
                           <button
                             type="button"
@@ -564,6 +761,9 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
                         </div>
+                        {fieldErrors.password && (
+                          <p className="mt-1 text-sm text-red-600">{fieldErrors.password}</p>
+                        )}
                       </div>
                       <Button
                         onClick={handleLogin}
@@ -617,10 +817,26 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                         <Input
                           type="text"
                           value={newUserData.name}
-                          onChange={(e) => setNewUserData(prev => ({ ...prev, name: e.target.value }))}
+                          onChange={(e) => {
+                            const value = e.target.value
+                            if (value.length <= 100) {
+                              setNewUserData(prev => ({ ...prev, name: value }))
+                              if (fieldErrors.name) {
+                                setFieldErrors(prev => {
+                                  const newErrors = { ...prev }
+                                  delete newErrors.name
+                                  return newErrors
+                                })
+                              }
+                            }
+                          }}
                           placeholder="Enter your full name"
-                          className="w-full"
+                          maxLength={100}
+                          className={`w-full ${fieldErrors.name ? 'border-red-500 focus:ring-red-500' : ''}`}
                         />
+                        {fieldErrors.name && (
+                          <p className="mt-1 text-sm text-red-600">{fieldErrors.name}</p>
+                        )}
                       </div>
 
                       <div>
@@ -632,8 +848,12 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                           value={newUserData.email}
                           disabled
                           placeholder={newUserData.email}
-                          className="w-full bg-neutral-50"
+                          maxLength={100}
+                          className={`w-full bg-neutral-50 ${fieldErrors.email ? 'border-red-500' : ''}`}
                         />
+                        {fieldErrors.email && (
+                          <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
+                        )}
                       </div>
 
                       <div>
@@ -643,12 +863,24 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                         <Input
                           type="tel"
                           value={newUserData.mobile}
-                          onChange={(e) =>
-                            setNewUserData(prev => ({ ...prev, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) }))
-                          }
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '').slice(0, 10)
+                            setNewUserData(prev => ({ ...prev, mobile: value }))
+                            if (fieldErrors.mobile) {
+                              setFieldErrors(prev => {
+                                const newErrors = { ...prev }
+                                delete newErrors.mobile
+                                return newErrors
+                              })
+                            }
+                          }}
                           placeholder="Enter 10-digit mobile number"
-                          className="w-full"
+                          maxLength={10}
+                          className={`w-full ${fieldErrors.mobile ? 'border-red-500 focus:ring-red-500' : ''}`}
                         />
+                        {fieldErrors.mobile && (
+                          <p className="mt-1 text-sm text-red-600">{fieldErrors.mobile}</p>
+                        )}
                       </div>
 
                       <div>
@@ -659,9 +891,22 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                           <Input
                             type={showPassword ? 'text' : 'password'}
                             value={newUserData.password}
-                            onChange={(e) => setNewUserData(prev => ({ ...prev, password: e.target.value }))}
-                            placeholder="Create a password"
-                            className="w-full pr-10"
+                            onChange={(e) => {
+                              const value = e.target.value
+                              if (value.length <= 128) {
+                                setNewUserData(prev => ({ ...prev, password: value }))
+                                if (fieldErrors.password) {
+                                  setFieldErrors(prev => {
+                                    const newErrors = { ...prev }
+                                    delete newErrors.password
+                                    return newErrors
+                                  })
+                                }
+                              }
+                            }}
+                            placeholder="Create a password (min 8 chars, 1 uppercase, 1 lowercase, 1 number)"
+                            maxLength={128}
+                            className={`w-full pr-10 ${fieldErrors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
                           />
                           <button
                             type="button"
@@ -671,6 +916,9 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
                         </div>
+                        {fieldErrors.password && (
+                          <p className="mt-1 text-sm text-red-600">{fieldErrors.password}</p>
+                        )}
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-neutral-700 mb-2">
@@ -680,9 +928,22 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                           <Input
                             type={showPassword ? 'text' : 'password'}
                             value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            onChange={(e) => {
+                              const value = e.target.value
+                              if (value.length <= 128) {
+                                setConfirmPassword(value)
+                                if (fieldErrors.confirmPassword) {
+                                  setFieldErrors(prev => {
+                                    const newErrors = { ...prev }
+                                    delete newErrors.confirmPassword
+                                    return newErrors
+                                  })
+                                }
+                              }
+                            }}
                             placeholder="Confirm password"
-                            className="w-full pr-10"
+                            maxLength={128}
+                            className={`w-full pr-10 ${fieldErrors.confirmPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
                           />
                           <button
                             type="button"
@@ -692,6 +953,9 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                           </button>
                         </div>
+                        {fieldErrors.confirmPassword && (
+                          <p className="mt-1 text-sm text-red-600">{fieldErrors.confirmPassword}</p>
+                        )}
                       </div>
                     </div>
 
@@ -744,10 +1008,26 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                             <Input
                             type="email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => {
+                              const value = e.target.value
+                              if (value.length <= 100) {
+                                setEmail(value)
+                                if (fieldErrors.email) {
+                                  setFieldErrors(prev => {
+                                    const newErrors = { ...prev }
+                                    delete newErrors.email
+                                    return newErrors
+                                  })
+                                }
+                              }
+                            }}
                             placeholder="you@example.com"
-                              className="w-full"
+                            maxLength={100}
+                              className={`w-full ${fieldErrors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
                             />
+                            {fieldErrors.email && (
+                              <p className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
+                            )}
                           </div>
                         <Button onClick={sendEmailOTP} disabled={isLoading || !email} className="w-full">
                             {isLoading ? 'Sending...' : 'Send OTP'}
@@ -785,10 +1065,24 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                             <Input
                               type="text"
                               value={otp}
-                              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '').slice(0, 6)
+                                setOtp(value)
+                                if (fieldErrors.otp) {
+                                  setFieldErrors(prev => {
+                                    const newErrors = { ...prev }
+                                    delete newErrors.otp
+                                    return newErrors
+                                  })
+                                }
+                              }}
                               placeholder="Enter 6-digit OTP"
-                              className="w-full"
+                              maxLength={6}
+                              className={`w-full ${fieldErrors.otp ? 'border-red-500 focus:ring-red-500' : ''}`}
                             />
+                            {fieldErrors.otp && (
+                              <p className="mt-1 text-sm text-red-600">{fieldErrors.otp}</p>
+                            )}
                         <div className="flex gap-2">
                           <Button onClick={verifyEmailOTP} disabled={isLoading || otp.length !== 6} className="flex-1">
                               {isLoading ? 'Verifying...' : 'Verify OTP'}
@@ -800,6 +1094,7 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                         </div>
                       )}
                     {/* Google Login */}
+                    {isGoogleAvailable && (
                     <div className="space-y-4">
                     <div className="relative">
                       <div className="absolute inset-0 flex items-center">
@@ -812,8 +1107,19 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                       <Button
                         onClick={handleGoogleLogin}
                         variant="outline"
-                        className="w-full"
-                      >
+                          disabled={isLoading}
+                          className="w-full hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isLoading ? (
+                            <span className="flex items-center">
+                              <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                              </svg>
+                              Connecting...
+                            </span>
+                          ) : (
+                            <>
                         <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                           <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -821,8 +1127,11 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                           <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                         </svg>
                         Continue with Google
+                            </>
+                          )}
                       </Button>
                     </div>
+                    )}
                   </div>
                 ) : activeTab === 'forgot_email' || activeTab === 'forgot_otp' ? (
                   /* Forgot Password Flow */
@@ -849,10 +1158,26 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                           <Input
                             type="email"
                             value={resetEmail}
-                            onChange={(e) => setResetEmail(e.target.value)}
+                            onChange={(e) => {
+                              const value = e.target.value
+                              if (value.length <= 100) {
+                                setResetEmail(value)
+                                if (fieldErrors.resetEmail) {
+                                  setFieldErrors(prev => {
+                                    const newErrors = { ...prev }
+                                    delete newErrors.resetEmail
+                                    return newErrors
+                                  })
+                                }
+                              }
+                            }}
                             placeholder="you@example.com"
-                            className="w-full"
+                            maxLength={100}
+                            className={`w-full ${fieldErrors.resetEmail ? 'border-red-500 focus:ring-red-500' : ''}`}
                           />
+                          {fieldErrors.resetEmail && (
+                            <p className="mt-1 text-sm text-red-600">{fieldErrors.resetEmail}</p>
+                          )}
                         </div>
                         <Button onClick={sendForgotOTP} disabled={isLoading || !resetEmail} className="w-full">
                           {isLoading ? 'Sending...' : 'Send OTP'}
@@ -882,29 +1207,75 @@ export function LoginSidebar({ isOpen, onClose }: LoginSidebarProps) {
                         <Input
                           type="text"
                           value={otp}
-                          onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, '').slice(0, 6)
+                            setOtp(value)
+                            if (fieldErrors.otp) {
+                              setFieldErrors(prev => {
+                                const newErrors = { ...prev }
+                                delete newErrors.otp
+                                return newErrors
+                              })
+                            }
+                          }}
                           placeholder="Enter 6-digit OTP"
-                          className="w-full"
+                          maxLength={6}
+                          className={`w-full ${fieldErrors.otp ? 'border-red-500 focus:ring-red-500' : ''}`}
                         />
+                        {fieldErrors.otp && (
+                          <p className="mt-1 text-sm text-red-600">{fieldErrors.otp}</p>
+                        )}
                         <div>
                           <label className="block text-sm font-medium text-neutral-700 mb-2">New Password</label>
                           <Input
                             type={showPassword ? 'text' : 'password'}
                             value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            placeholder="Enter new password"
-                            className="w-full"
+                            onChange={(e) => {
+                              const value = e.target.value
+                              if (value.length <= 128) {
+                                setNewPassword(value)
+                                if (fieldErrors.newPassword) {
+                                  setFieldErrors(prev => {
+                                    const newErrors = { ...prev }
+                                    delete newErrors.newPassword
+                                    return newErrors
+                                  })
+                                }
+                              }
+                            }}
+                            placeholder="Enter new password (min 8 chars, 1 uppercase, 1 lowercase, 1 number)"
+                            maxLength={128}
+                            className={`w-full ${fieldErrors.newPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
                           />
+                          {fieldErrors.newPassword && (
+                            <p className="mt-1 text-sm text-red-600">{fieldErrors.newPassword}</p>
+                          )}
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-neutral-700 mb-2">Confirm Password</label>
                           <Input
                             type={showPassword ? 'text' : 'password'}
                             value={confirmResetPassword}
-                            onChange={(e) => setConfirmResetPassword(e.target.value)}
+                            onChange={(e) => {
+                              const value = e.target.value
+                              if (value.length <= 128) {
+                                setConfirmResetPassword(value)
+                                if (fieldErrors.confirmResetPassword) {
+                                  setFieldErrors(prev => {
+                                    const newErrors = { ...prev }
+                                    delete newErrors.confirmResetPassword
+                                    return newErrors
+                                  })
+                                }
+                              }
+                            }}
                             placeholder="Confirm new password"
-                            className="w-full"
+                            maxLength={128}
+                            className={`w-full ${fieldErrors.confirmResetPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
                           />
+                          {fieldErrors.confirmResetPassword && (
+                            <p className="mt-1 text-sm text-red-600">{fieldErrors.confirmResetPassword}</p>
+                          )}
                         </div>
                         <div className="flex gap-2">
                           <Button onClick={handleResetPassword} disabled={isLoading || otp.length !== 6 || !newPassword || !confirmResetPassword} className="flex-1">

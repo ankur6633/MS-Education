@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
-import connectDB from '@/lib/db';
+import dbConnect from '@/lib/db';
 import User from '@/lib/models/User';
 
 const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID || '';
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (!oauthClient) {
       return NextResponse.json({ success: false, error: 'Google client ID not configured' }, { status: 500 });
     }
-    await connectDB();
+    await dbConnect();
     const { idToken } = await request.json();
     if (!idToken) {
       return NextResponse.json({ success: false, error: 'idToken is required' }, { status: 400 });
@@ -44,8 +44,10 @@ export async function POST(request: NextRequest) {
     const picture = payload.picture;
     const sub = payload.sub || email;
 
-    // Find or create user
+    // Find or create user (handles both login and registration)
     let user = await User.findOne({ email });
+    const isNewUser = !user;
+    
     if (!user) {
       // Create new user with placeholder unique mobile and random password
       const mobile = toTenDigitUnique(sub);
@@ -58,10 +60,17 @@ export async function POST(request: NextRequest) {
         profileImage: picture,
       });
       await user.save();
+    } else {
+      // Update profile image if it's not set or if Google has a newer one
+      if (picture && (!(user as any).profileImage || (user as any).profileImage !== picture)) {
+        (user as any).profileImage = picture;
+        await user.save();
+      }
     }
 
     return NextResponse.json({
       success: true,
+      isNewUser,
       user: {
         _id: user._id,
         name: user.name,

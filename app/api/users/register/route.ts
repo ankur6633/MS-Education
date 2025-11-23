@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
+import dbConnect from '@/lib/db';
 import User from '@/lib/models/User';
 import EmailOTP from '@/lib/models/EmailOTP';
 
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
+    await dbConnect();
 
     const body = await request.json();
     const step = body?.step as 'send_otp' | 'verify_otp' | 'create_account' | undefined;

@@ -1,5 +1,6 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import GoogleProvider from 'next-auth/providers/google';
 
 // Ensure required NextAuth env is set to prevent 500s in production
 (() => {
@@ -55,16 +56,59 @@ export const authOptions: NextAuthOptions = {
 
         return null;
       }
-    })
+    }),
+    // Google OAuth Provider (optional - only enabled if both Client ID and Secret are provided)
+    ...(process.env.GOOGLE_CLIENT_ID && 
+        process.env.GOOGLE_CLIENT_SECRET &&
+        process.env.GOOGLE_CLIENT_ID.trim() !== '' &&
+        process.env.GOOGLE_CLIENT_SECRET.trim() !== ''
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            authorization: {
+              params: {
+                prompt: 'consent',
+                access_type: 'offline',
+                response_type: 'code',
+              },
+            },
+          }),
+        ]
+      : []),
   ],
   session: {
     strategy: 'jwt',
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account, profile }) {
+      // Allow Google sign-in if Google provider is configured
+      if (account?.provider === 'google') {
+        // You can add additional checks here if needed
+        // For example, restrict to specific email domains
+        return true;
+      }
+      // Allow credentials sign-in
+      return true;
+    },
+    async jwt({ token, user, account }) {
       if (user) {
         token.role = user.role;
         token.email = user.email;
+      }
+      // Handle Google OAuth
+      if (account?.provider === 'google') {
+        // You can fetch user from database here and set role
+        // For now, we'll set a default role or check if it's admin email
+        const isProd = process.env.NODE_ENV === 'production';
+        const adminEmail = (
+          process.env.ADMIN_EMAIL ||
+          (!isProd ? 'admin@mseducation.com' : '')
+        ).trim().toLowerCase();
+        
+        if (token.email?.toLowerCase() === adminEmail) {
+          token.role = 'admin';
+        }
       }
       return token;
     },

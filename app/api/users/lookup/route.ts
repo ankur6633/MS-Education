@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
+import dbConnect from '@/lib/db';
 import User from '@/lib/models/User';
 
 type IdentifierType = 'email' | 'mobile';
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		await connectDB();
+		await dbConnect();
 
 		const query = parsed.type === 'email' ? { email: parsed.value } : { mobile: parsed.value };
 		const user = await User.findOne(query);

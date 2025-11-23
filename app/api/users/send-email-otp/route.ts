@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
+import dbConnect from '@/lib/db';
 import EmailOTP from '@/lib/models/EmailOTP';
 import { emailService } from '@/lib/email-service';
 
@@ -9,7 +9,7 @@ function generateOTP(): string {
 
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
+    await dbConnect();
     const { email } = await request.json();
     if (!email || typeof email !== 'string') {
       return NextResponse.json({ success: false, error: 'Valid email is required' }, { status: 400 });

@@ -78,10 +78,8 @@ NEXT_PUBLIC_SITE_URL=https://mseducation.in
 │   ├── ui/                  # Reusable UI components
 │   ├── Navbar.tsx           # Navigation component
 │   ├── Hero.tsx             # Hero section
-│   ├── HowItWorks.tsx       # How it works section
 │   ├── SkillWallet.tsx      # Skill wallet section
 │   ├── JobsRouter.tsx       # Jobs section
-│   ├── AIMentor.tsx         # AI mentor section
 │   ├── ForCampus.tsx        # Campus section
 │   ├── ForRecruiters.tsx    # Recruiters section
 │   ├── Pricing.tsx          # Pricing section

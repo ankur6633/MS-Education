@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
+import dbConnect from '@/lib/db';
 import EmailOTP from '@/lib/models/EmailOTP';
 
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
+    await dbConnect();
     const { email, otp } = await request.json();
     if (!email || !otp) {
       return NextResponse.json({ success: false, error: 'Email and OTP are required' }, { status: 400 });
